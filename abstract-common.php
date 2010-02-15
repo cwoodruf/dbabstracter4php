@@ -38,7 +38,7 @@ abstract class Entity extends AbstractDB {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
-				$idata[$field] = $this->quote($data['field'],"'");
+				$idata[$field] = $this->quote($data[$field],"'");
 			}
 			$insert = "insert into {$this->table} (".implode(",",array_keys($idata)).") ".
 					"values (".implode(",",array_values($idata)).")";
