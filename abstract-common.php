@@ -123,16 +123,11 @@ abstract class Entity extends AbstractDB {
 class Relation extends Entity {
 	private $relates;
 
-	public function __construct($db,$tables,$tb,$relates) {
+	public function __construct($db,$tables,$tb) {
 		parent::__construct($db,$tables,$tb);
-		if (is_array($relates)) {
-			foreach($relates as $table) {
-				if ($this->tables[$table]) $this->relates[] = $table;
-			}
-			# this should not happen but to avoid confusion ...
-			if (!is_array($this->key)) {
-				$this->key = array($this->key);
-			}
+		# this should not happen but to avoid confusion ...
+		if (!is_array($this->key)) {
+			$this->key = array($this->key);
 		}
 	}
 
@@ -199,7 +194,7 @@ class Relation extends Entity {
 	 */
 	protected function splitid($id) {
 		if (!is_array($id)) throw new Exception("upd: relation id is not an array");
-		foreach ($this->key as $field) {
+		foreach ($this->key as $field => $table) {
 			if (empty($id[$field])) throw new Exception("del: missing $field in id!");
 			$fields[] = $field."='%s'";
 			$ids[] = $id[$field];
