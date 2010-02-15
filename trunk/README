@@ -34,7 +34,7 @@ library for your database and the common library. For example:
  class MyRelation extends Relation {
      function __construct() {
 	 global $schema, $db;
-	 parent::__construct($db,$schema,'myrelation', array('entity1','entity2'));
+	 parent::__construct($db,$schema,'myrelation');
      }
  }
  ?>

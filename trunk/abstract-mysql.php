@@ -55,7 +55,7 @@ abstract class AbstractDB {
 	 */
 	public function run() {
 		$args = func_get_args();
-		$this->query = array_unshift($args);
+		$this->query = array_shift($args);
 		if (is_array($args)) {
 			foreach ($args as $arg) {
 				$sprintflist[] = "'".$this->quote($arg)."'";
@@ -91,10 +91,18 @@ abstract class AbstractDB {
 		return $this->lastid = $row[0];
 	}
 	/**
+	 * check for the number of rows returned
+	 */
+	public function num() {
+		if (!is_resource($this->result)) return false;
+		return mysql_num_rows($this->result);
+	}
+	/**
 	 * simply get the next row
 	 */
 	public function getnext() {
 		if (!is_resource($this->result)) return false;
+		if (!$this->num()) return false;
 		return mysql_fetch_assoc($this->result);
 	}
 	/**

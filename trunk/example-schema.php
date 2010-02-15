@@ -55,7 +55,7 @@ $tables['study'] = array(
 # example relation
 # associates participants to a study
 $tables['enrollment'] = array(
-  'PRIMARY KEY' => array('participant_id','study_id'),
+  'PRIMARY KEY' => array('participant_id' => 'participant', 'study_id' => 'study'),
   'participant_id' => array( 'type' => 'int', 'size' => 11 ),
   'study_id' => array( 'type' => 'int', 'size' => 11 ),
   'enrolled' => array( 'type' => 'datetime', 'size' => 20 ),
