@@ -37,6 +37,7 @@ library for your database and the common library. For example:
 	 parent::__construct($db,$schema,'myrelation', array('entity1','entity2'));
      }
  }
+ ?>
 
 Currently only mysql is supported. However, it should be relatively easy to port to
 another rdbms.
