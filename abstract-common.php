@@ -11,9 +11,8 @@ abstract class Entity extends AbstractDB {
 	private $table;
 	private $key;
 		
-	public function __construct($db,$tb) {
-		global $drdat_tables; 
-		$this->tables = $drdat_tables;
+	public function __construct($db,$tables,$tb) {
+		$this->tables = $tables;
 
 		parent::__construct($db);
 
@@ -115,9 +114,8 @@ abstract class Entity extends AbstractDB {
 class Relation extends Entity {
 	private $relates;
 
-	public function __construct($db,$tb,$relates) {
-		global $drdat_tables; 
-		parent::__construct($db,$tb);
+	public function __construct($db,$tables,$tb,$relates) {
+		parent::__construct($db,$tables,$tb);
 		if (is_array($relates)) {
 			foreach($relates as $table) {
 				if ($this->tables[$table]) $this->relates[] = $table;
