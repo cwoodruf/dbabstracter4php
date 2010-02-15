@@ -144,7 +144,8 @@ abstract class Entity extends Mysql {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in ins!");
 			foreach ($this->schema as $field => $fdata) {
-				if ($fdata['insert ignore']) continue;
+				if ($this->iskey($field,$fdata)) continue;
+				if (!isset($data[$field])) continue;
 				$idata[$field] = $this->quote($data['field'],"'");
 			}
 			$insert = "insert into {$this->table} (".implode(",",array_keys($idata)).") ".
@@ -162,6 +163,8 @@ abstract class Entity extends Mysql {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			foreach ($this->schema as $field => $fdata) {
+				if ($this->iskey($field,$fdata)) continue;
+				if (!isset($data[$field])) continue;
 				$udata[$field] = "$field=".$this->quote($data['field'],"'");
 			}
 			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->key}=%u";
@@ -202,11 +205,19 @@ abstract class Entity extends Mysql {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			$this->run("select * from {$this->table} where {$this->key}=%u", $id);
-			return $this->resultarray();
+			$rows = $this->resultarray();
+			return $rows[0];
+
 		} catch (Exception $e) {
 			$this->err($e);
 			return false;
 		}
+	}
+
+	public function iskey($field,$fdata) {
+		if ($field == 'PRIMARY KEY') return true;
+		if ($fdata['key']) return true;
+		return false;
 	}
 }
 
@@ -237,13 +248,69 @@ class Relation extends Entity {
 	 * since these are identified by more than one value $id is necessarily an array
 	 */
 	public function upd($id,$data) { 
-		if (!is_array($id)) throw new Exception("upd: relation id is not an array");
+		$args = $this->splitid($id);
+		try {
+			$args = $this->splitid($id);
+			$key = array_unshift($args);
+			foreach ($this->schema as $field => $fdata) {
+				if ($this->iskey($field,$fdata)) continue;
+				if (!isset($data[$field])) continue;
+				$set[] = "$field='%s'";
+				$vals[] = $value;
+			}
+			$query = "update {$this->table} set ".implode(",", $set)." where $key";
+			$valskeys = array_merge($vals,$args);
+			call_user_func_array( array($this,'run'), $valskeys );
+			return $this->result;
+
+		} catch (Exception $e) {
+			$this->err($e);
+			return false;
+		}
 	}
+
 	public function del($id) { 
-		if (!is_array($id)) throw new Exception("upd: relation id is not an array");
+		try {
+			$args = $this->splitid($id);
+			$args[0] = "delete from {$this->table} where {$args[0]}";
+			call_user_func_array( array($this,'run'), $args );
+			return $this->result;
+
+		} catch (Exception $e) {
+			$this->err($e);
+			return false;
+		}
 	}
+
 	public function getone($id) { 
+		try {
+			$args = $this->splitid($id);
+			$args[0] = "select * from {$this->table} where {$args[0]}";
+			call_user_func_array( array($this,'run'), $args );
+			$rows = $this->resultarray();
+			return $rows[0];
+
+		} catch (Exception $e) {
+			$this->err($e);
+			return false;
+		}
+	}
+
+	/**
+	 * process an id array in such a way that its easier to use the run method with it
+	 * for basic queries 
+	 * @param $id - array of primary key field names and values to look for
+	 * @return an array with the field string and key values as a single array
+	 *         the field string is always the 0th element in the array
+	 */
+	protected function splitid($id) {
 		if (!is_array($id)) throw new Exception("upd: relation id is not an array");
+		foreach ($this->key as $field) {
+			if (empty($id[$field])) throw new Exception("del: missing $field in id!");
+			$fields[] = $field."='%s'";
+			$ids[] = $id[$field];
+		}
+		return array_merge( array( '('.implode(' and ', $fields).')' ), $ids );
 	}
 }
 
