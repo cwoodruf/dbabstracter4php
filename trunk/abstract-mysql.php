@@ -56,7 +56,7 @@ abstract class AbstractDB {
 	public function run() {
 		$args = func_get_args();
 		$this->query = array_shift($args);
-		if (is_array($args)) {
+		if (count($args)) {
 			foreach ($args as $arg) {
 				$sprintflist[] = "'".$this->quote($arg)."'";
 			}
