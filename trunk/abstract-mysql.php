@@ -6,7 +6,7 @@
  * needs an array $tables with schema information - 
  * this can be generated from the mysql schema information
  */
-abstract class Mysql {
+abstract class AbstractDB {
 	private $db;
 	private $conn;
 	private $schema;
