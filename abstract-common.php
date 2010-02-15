@@ -6,7 +6,7 @@
  * these tables are assumed to only have one field that is the key
  * you can define this key in the $tables array or simply use {table name}_id 
  */
-abstract class Entity extends Mysql {
+abstract class Entity extends AbstractDB {
 	private $tables; 
 	private $table;
 	private $key;
