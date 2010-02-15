@@ -1,4 +1,11 @@
 <?php
+/*
+---------------------------------------------------------------
+Author Cal Woodruff cwoodruf@gmail.com
+Licensed under the Perl Artistic License version 2.0
+http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
+---------------------------------------------------------------
+*/
 
 /**
  * class to define entities: 
@@ -36,7 +43,8 @@ abstract class Entity extends AbstractDB {
 			$insert = "insert into {$this->table} (".implode(",",array_keys($idata)).") ".
 					"values (".implode(",",array_values($idata)).")";
 			$this->run($insert);
-			return $this->getid();
+			return $this->result;
+
 		} catch(Exception $e) {
 			$this->err($e);
 			return false;
