@@ -1,11 +1,18 @@
 <?php
 # example schema file used by dbabstracter
+# you would use a schema called "myschema.php" like this:
+#
+# require_once('myschema.php');
+# require_once('abstract-mysql.php');
+# require_once('abstract-common.php');
+
+# db login information
 # these constants are defined elsewhere - preferably a location invisible to outsiders
-$DRDAT = array(
-	'host' => DRDAT_DBHOST,
-	'login' => DRDAT_DBLOGIN,
-	'pw' => DRDAT_DBPW,
-	'db' => DRDAT_DB,
+$db = array(
+	'host' => _DBHOST,
+	'login' => _DBLOGIN,
+	'pw' => _DBPW,
+	'db' => _DB,
 );
 
 
@@ -16,7 +23,7 @@ $DRDAT = array(
  * for automatically checking input or generating forms and are left in 
  * as a sort of serving suggestion
  * 
- * TODO: create tool for generating this file from a database schema
+ * TODO: create tool for generating this array from a database schema
  */
 
 $tables = array();
@@ -35,7 +42,7 @@ $tables['study'] = array(
   'study_id' => array( 'type' => 'int', size => 11, 'key' => true ),
   'startdate' => array( 'type' => 'date', size => 20 ),
   'enddate' => array( 'type' => 'date', size => 20 ),
-}
+);
 
 # example relation
 # associates participants to a study

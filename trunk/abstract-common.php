@@ -77,7 +77,7 @@ abstract class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("select * from {$this->table} order by lastname, firstname");
+			$this->run("select * from {$this->table}");
 			return $this->resultarray();
 		} catch (Exception $e) {
 			$this->err($e);
@@ -90,8 +90,9 @@ abstract class Entity extends AbstractDB {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			$this->run("select * from {$this->table} where {$this->key}=%u", $id);
-			$rows = $this->resultarray();
-			return $rows[0];
+			$row = $this->getnext();
+			$this->free();
+			return $row;
 
 		} catch (Exception $e) {
 			$this->err($e);
@@ -171,8 +172,9 @@ class Relation extends Entity {
 			$args = $this->splitid($id);
 			$args[0] = "select * from {$this->table} where {$args[0]}";
 			call_user_func_array( array($this,'run'), $args );
-			$rows = $this->resultarray();
-			return $rows[0];
+			$row = $this->getnext();
+			$this->free();
+			return $row;
 
 		} catch (Exception $e) {
 			$this->err($e);
