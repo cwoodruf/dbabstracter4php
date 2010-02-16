@@ -74,21 +74,20 @@ abstract class AbstractDB {
 	 */
 	public function resultarray($keep=false) {
 		if (!is_resource($this->result)) return false;
-		while ($row = mysql_fetch_assoc($this->result,$this->conn)) {
+		while ($row = mysql_fetch_assoc($this->result)) {
 			$out[] = $row;
 		}
 		if (!$keep) $this->free();
 		return $out;
 	}
 	/**
-	 * run the mysql get_last_insert_id() function
+	 * run the mysql last_insert_id() function
 	 */
 	public function getid() {
-		$this->free();
-		$this->run("select get_last_insert_id()");
+		$this->run("select last_insert_id() as id");
 		$row = $this->getnext();
 		$this->free();
-		return $this->lastid = $row[0];
+		return $this->lastid = $row['id'];
 	}
 	/**
 	 * check for the number of rows returned
@@ -102,7 +101,6 @@ abstract class AbstractDB {
 	 */
 	public function getnext() {
 		if (!is_resource($this->result)) return false;
-		if (!$this->num()) return false;
 		return mysql_fetch_assoc($this->result);
 	}
 	/**
@@ -115,7 +113,7 @@ abstract class AbstractDB {
 	/**
 	 * run input through a string cleanup function
 	 */
-	public function quote($str,$quote=null) {
+	public function quote($str,$quote='') {
 		return $quote.mysql_real_escape_string($str,$this->conn).$quote;
 	}
 	/** 
