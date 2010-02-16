@@ -1,6 +1,18 @@
 #!/usr/bin/perl
 # purpose of this script is to read mysql CREATE TABLE statements and 
 # make a schema file from them 
+# usage:
+# mysql2schema.pl mysql-dump-file > my-schema-file.php
+# 
+# or 
+#
+# mysqldump ... | mysql2schema.pl > my-schema-file.php
+#
+# you should then edit the my-schema-file.php file as needed before making 
+# Entity and Relation child classes based on each table
+#
+# TODO: make a tool to do this automatically
+#
 
 # if you use the form {tablename}_id for the primary key for Entity tables
 # (ie where there is only one key) this will correctly add the table
