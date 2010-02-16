@@ -35,12 +35,13 @@ abstract class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in ins!");
+			$idata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
 				$idata[$field] = $this->quote($data[$field],"'");
 			}
-			$insert = "insert into {$this->table} (".implode(",",array_keys($idata)).") ".
+			$insert = "insert ignore into {$this->table} (".implode(",",array_keys($idata)).") ".
 					"values (".implode(",",array_values($idata)).")";
 			$this->run($insert);
 			return $this->result;
@@ -58,11 +59,12 @@ abstract class Entity extends AbstractDB {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
-				$udata[$field] = "$field=".$this->quote($data['field'],"'");
+				$udata[$field] = "$field=".$this->quote($data[$field],"'");
 			}
 			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->key}=%u";
 			$this->run($update,$id);
 			return $this->result;
+
 		} catch(Exception $e) {
 			$this->err($e);
 			return false;
