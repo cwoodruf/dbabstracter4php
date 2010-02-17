@@ -14,20 +14,19 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
  * you can define this key in the $tables array or simply use {table name}_id 
  */
 abstract class Entity extends AbstractDB {
-	private $tables; 
-	private $table;
-	private $key;
+	public $table;
+	public $schema;
+	public $primary;
 		
 	public function __construct($db,$tables,$tb) {
-		$this->tables = $tables;
-
 		parent::__construct($db);
 
-		if ($tb and is_array($this->tables[$tb])) {
+		if ($tb and is_array($tables[$tb])) {
 			$this->table = $tb;
 			$this->schema = $tables[$tb];
-			if (isset($tables[$tb]['PRIMARY KEY'])) $this->key = $tables[$tb]['PRIMARY KEY'];
-			else $this->key = $tb."_id";
+			if (isset($tables[$tb]['PRIMARY KEY'])) 
+				$this->primary = $tables[$tb]['PRIMARY KEY'];
+			else $this->primary = $tb."_id";
 		}
 	}
 
@@ -61,7 +60,7 @@ abstract class Entity extends AbstractDB {
 				if (!isset($data[$field])) continue;
 				$udata[$field] = "$field=".$this->quote($data[$field],"'");
 			}
-			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->key}=%u";
+			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->primary}=%u";
 			$this->run($update,$id);
 			return $this->result;
 
@@ -75,7 +74,7 @@ abstract class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("delete from {$this->table} where {$this->key}=%u", $id);
+			$this->run("delete from {$this->table} where {$this->primary}=%u", $id);
 			return $this->result;
 		} catch(Exception $e) {
 			$this->err($e);
@@ -99,7 +98,7 @@ abstract class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("select * from {$this->table} where {$this->key}=%u", $id);
+			$this->run("select * from {$this->table} where {$this->primary}=%u", $id);
 			$row = $this->getnext();
 			$this->free();
 			return $row;
@@ -123,14 +122,9 @@ abstract class Entity extends AbstractDB {
  * we need to add some functionality to handle that gracefully
  */
 class Relation extends Entity {
-	private $relates;
 
 	public function __construct($db,$tables,$tb) {
 		parent::__construct($db,$tables,$tb);
-		# this should not happen but to avoid confusion ...
-		if (!is_array($this->key)) {
-			$this->key = array($this->key);
-		}
 	}
 
 	/**
@@ -138,18 +132,17 @@ class Relation extends Entity {
 	 * since these are identified by more than one value $id is necessarily an array
 	 */
 	public function upd($id,$data) { 
-		$args = $this->splitid($id);
 		try {
 			$args = $this->splitid($id);
-			$key = array_unshift($args);
+			$key = array_shift($args);
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
 				$set[] = "$field='%s'";
-				$vals[] = $value;
+				$vals[] = $data[$field];
 			}
 			$query = "update {$this->table} set ".implode(",", $set)." where $key";
-			$valskeys = array_merge($vals,$args);
+			$valskeys = array_merge(array($query),$vals,$args);
 			call_user_func_array( array($this,'run'), $valskeys );
 			return $this->result;
 
@@ -194,10 +187,15 @@ class Relation extends Entity {
 	 * @return an array with the field string and key values as a single array
 	 *         the field string is always the 0th element in the array
 	 */
-	protected function splitid($id) {
-		if (!is_array($id)) throw new Exception("upd: relation id is not an array");
-		foreach ($this->key as $field => $table) {
-			if (empty($id[$field])) throw new Exception("del: missing $field in id!");
+	public function splitid($id) {
+		if (!is_array($id)) 
+			throw new Exception("splitid: relation id is not an array");
+		if (!is_array($this->primary)) 
+			throw new Exception("splitid: primary key is not array");
+
+		foreach ($this->primary as $field => $table) {
+			if (empty($id[$field])) 
+				throw new Exception("splitid: missing $field in id");
 			$fields[] = $field."='%s'";
 			$ids[] = $id[$field];
 		}
