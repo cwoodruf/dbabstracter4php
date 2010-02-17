@@ -14,13 +14,13 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
  * this can be generated from the mysql schema information
  */
 abstract class AbstractDB {
-	private $db;
-	private $conn;
-	private $schema;
-	private $error;
-	private $query;
-	private $result;
-	private $lastid;
+	public $db;
+	public $conn;
+	public $schema;
+	public $error;
+	public $query;
+	public $result;
+	public $lastid;
 
 	public function __construct($dbdata) {
 		$this->connect($dbdata);
