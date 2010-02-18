@@ -55,10 +55,11 @@ abstract class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
+			$udata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
-				$udata[$field] = "$field=".$this->quote($data[$field],"'");
+				$udata[] = "$field=".$this->quote($data[$field],"'");
 			}
 			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->primary}=%u";
 			$this->run($update,$id);

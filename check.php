@@ -11,7 +11,7 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
  * utility functions to check input - not directly related to dbabstracter
  */ 
 class Check {
-	private $error;
+	private static $error;
 
 	public static function isvar($s,$emptyok=true) {
 		if ($emptyok) return preg_match('#^\w*$#', $s);
