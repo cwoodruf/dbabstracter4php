@@ -40,9 +40,7 @@ abstract class Entity extends AbstractDB {
 				if (!isset($data[$field])) continue;
 				$idata[$field] = $this->quote($data[$field],"'");
 			}
-			$insert = "insert ignore into {$this->table} (".implode(",",array_keys($idata)).") ".
-					"values (".implode(",",array_values($idata)).")";
-			$this->run($insert);
+			$this->insert($idata);
 			return $this->result;
 
 		} catch(Exception $e) {
@@ -83,15 +81,38 @@ abstract class Entity extends AbstractDB {
 		}
 	}
 
-	public function getall() {
+	public function getall($criterion=null) {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("select * from {$this->table}");
+			$this->run_criterion("select * from {$this->table}",$criterion);
 			return $this->resultarray();
 		} catch (Exception $e) {
 			$this->err($e);
 			return false;
+		}
+	}
+
+	public function howmany($criterion=null) {
+		try {
+			if (!preg_match('#^\w+$#', $this->table)) 
+				throw new Exception("missing valid table name in upd!");
+			$this->run_criterion("select count(*) as howmany from {$this->table}",$criterion);
+			$row = $this->getnext();
+			$this->free();
+			return $row['howmany'];
+		} catch (Exception $e) {
+			$this->err($e);
+			return false;
+		}
+	}
+	
+	protected function run_criterion($select,$criterion) {
+		if (is_array($criterion)) {
+			$criterion[0] = "$select {$criterion[0]}";
+			call_user_func_array(array($this,"run"),$criterion); 
+		} else {
+			$this->run("$select $criterion");
 		}
 	}
 
