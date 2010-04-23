@@ -47,8 +47,18 @@ abstract class AbstractDB {
 	public abstract function ins($data);
 	public abstract function upd($id,$data);
 	public abstract function del($id);
-	public abstract function getall();
+	public abstract function howmany($criterion=null);
+	public abstract function getall($criterion=null);
 	public abstract function getone($id);
+
+	/**
+	 * as insert ignore is mysql specific its defined here
+	 */
+	public function insert($idata) {
+		$insert = "insert ignore into {$this->table} (".implode(",",array_keys($idata)).") ".
+				"values (".implode(",",array_values($idata)).")";
+		$this->run($insert);
+	}
 
 	/**
 	 * run allows us to escape query data selectively and then run a query
