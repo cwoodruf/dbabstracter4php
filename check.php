@@ -41,7 +41,7 @@ class Check {
 		if (!preg_match('#^(\d{4})-(\d{2})-(\d{2}) (\d{2})\:(\d{2})(?:\:(\d{2})|)#', $s, $m)) 
 			return false;
 		if (!checkdate($m[2],$m[3],$m[1])) return false;
-		if (!self::validtime($m[1],$m[2],$m[3])) return false;
+		if (!self::validtime($m[4],$m[5],$m[6])) return false;
 		return true;
 	}
 	public static function validtime($hour,$minute,$second) {
@@ -59,6 +59,9 @@ class Check {
 	public static function digits($s,$emptyok=true) {
 		if ($emptyok) return preg_match('#^\d*$#', $s);
 		return preg_match('#^\d+$#', $s);
+	}
+	public static function ismd5($md5) {
+		return preg_match('#^[a-f0-9]{32}$#',$md5);
 	}
 	public static function validpassword($pw) {
 		$rules = "passwords should be 6 or more characters and not contain spaces";

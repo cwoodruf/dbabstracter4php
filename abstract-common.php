@@ -13,7 +13,7 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
  * these tables are assumed to only have one field that is the key
  * you can define this key in the $schema array or simply use {table name}_id 
  */
-abstract class Entity extends AbstractDB {
+class Entity extends AbstractDB {
 	public $table;
 	public $schema;
 	public $primary;
