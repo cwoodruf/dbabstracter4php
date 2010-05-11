@@ -12,32 +12,38 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
  */ 
 class Check {
 	private static $error;
+	public static $emptyok = true;
 
-	public static function isvar($s,$emptyok=true) {
-		if ($emptyok) return preg_match('#^\w*$#', $s);
+	private static function emptyok($emptyok) {
+		if ($emptyok === null) return self::$emptyok;
+		return $emptyok;
+	}
+
+	public static function isvar($s,$emptyok=null) {
+		if (self::emptyok($emptyok)) return preg_match('#^\w*$#', $s);
 		return preg_match('#^\w+$#', $s);
 	}
-	public static function isemail($s,$emptyok=true) {
-		if ($emptyok and empty($s)) return true;
+	public static function isemail($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
 		$s = trim($s);
 		return preg_match('#^\w[\w\.\-]*@\w[\w\.\-]*\.\w+$#', $s);
 	}
-	public static function isdate($s,$emptyok=true) {
-		if ($emptyok and empty($s)) return true;
+	public static function isdate($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
 		if (preg_match('#^(\d{4})-(\d{2})-(\d{2})#', $s, $m)) {
 			return checkdate($m[2],$m[3],$m[1]);
 		}
 		return false;
 	}
-	public static function istime($s,$emptyok=true) {
-		if ($emptyok and empty($s)) return true;
+	public static function istime($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
 		if (preg_match('#^(\d{2})\:(\d{2})(?:\:(\d{2})|)$#', $s, $m)) {
 			if (self::validtime($m[1],$m[2],$m[3])) return true;
 		}
 		return false;
 	}
-	public static function isdatetime($s,$emptyok=true) {
-		if ($emptyok and empty($s)) return true;
+	public static function isdatetime($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
 		if (!preg_match('#^(\d{4})-(\d{2})-(\d{2}) (\d{2})\:(\d{2})(?:\:(\d{2})|)#', $s, $m)) 
 			return false;
 		if (!checkdate($m[2],$m[3],$m[1])) return false;
@@ -56,8 +62,8 @@ class Check {
 		if ($start > $end) return array($end, $start);
 		return array($start, $end);
 	}
-	public static function digits($s,$emptyok=true) {
-		if ($emptyok) return preg_match('#^\d*$#', $s);
+	public static function digits($s,$emptyok=null) {
+		if (self::emptyok($emptyok)) return preg_match('#^\d*$#', $s);
 		return preg_match('#^\d+$#', $s);
 	}
 	public static function ismd5($md5) {
