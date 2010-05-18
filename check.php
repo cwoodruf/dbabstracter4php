@@ -14,6 +14,11 @@ class Check {
 	private static $error;
 	public static $emptyok = true;
 
+	/**
+	 * this function allows us to override the $emptyok default with 
+	 * the static variables value so we don't have to put "false" in 
+	 * every function call
+	 */
 	private static function emptyok($emptyok) {
 		if ($emptyok === null) return self::$emptyok;
 		return $emptyok;
