@@ -67,7 +67,7 @@ abstract class AbstractDB {
 		$args = func_get_args();
 		$query = array_shift($args);
 		if (count($args)) {
-			$query = vsprintf($query,$args);
+			$query = vsprintf($query,$this->quote($args));
 		} 
 		$this->query = $query;
 		$this->result = mysql_query($this->query,$this->conn);
@@ -121,6 +121,13 @@ abstract class AbstractDB {
 	 * run input through a string cleanup function
 	 */
 	public function quote($str,$quote='') {
+		if (is_array($str)) {
+			$quoted = array();
+			foreach ($str as $s) {
+				$quoted[] = $quote.mysql_real_escape_string($s,$this->conn).$quote;
+			}
+			return $quoted;
+		}
 		return $quote.mysql_real_escape_string($str,$this->conn).$quote;
 	}
 	/** 
