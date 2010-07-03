@@ -65,14 +65,11 @@ abstract class AbstractDB {
 	 */
 	public function run() {
 		$args = func_get_args();
-		$this->query = array_shift($args);
+		$query = array_shift($args);
 		if (count($args)) {
-			foreach ($args as $arg) {
-				$sprintflist[] = "'".$this->quote($arg)."'";
-			}
-			$qbuilder = 'return sprintf($this->query,'.implode(',',$sprintflist).');';
-			$this->query = eval($qbuilder);
+			$query = vsprintf($query,$args);
 		} 
+		$this->query = $query;
 		$this->result = mysql_query($this->query,$this->conn);
 		if (!$this->result) throw new Exception("query run error: ".mysql_error($this->conn));
 		return $this->result;
