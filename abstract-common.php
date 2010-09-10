@@ -120,7 +120,7 @@ class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("select * from {$this->table} where {$this->primary}=%u", $id);
+			$this->run("select * from {$this->table} where {$this->primary}='%s'", $id);
 			$row = $this->getnext();
 			$this->free();
 			return $row;
