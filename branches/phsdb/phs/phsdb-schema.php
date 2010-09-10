@@ -17,7 +17,7 @@ $schema['admins'] = array(
 	'password' => array( 'type' => 'varchar', 'size' => 64, ),
 	'created' => array( 'type' => 'datetime', ),
 	'modified' => array( 'type' => 'timestamp', ),
-	'perms' => array( 'type' => 'varchar', 'size' => 128, ),
+	'perms' => array( 'type' => 'enum', ),
 	'notes' => array( 'type' => 'varchar', 'size' => 255, ),
 );
 
@@ -36,6 +36,7 @@ $schema['checkins'] = array(
 );
 
 $schema['files'] = array(
+	'PRIMARY KEY' => 'path',
 	'path' => array( 'type' => 'varchar', 'size' => 255, 'key' => true, ),
 	'worker_id' => array( 'type' => 'int', 'size' => 11, ),
 	'uploaded' => array( 'type' => 'datetime', ),
@@ -49,5 +50,7 @@ $schema['worker'] = array(
 	'notes' => array( 'type' => 'text', ),
 	'voicemail' => array( 'type' => 'varchar', 'size' => 64, ),
 	'status' => array( 'type' => 'varchar', 'size' => 32, ),
+	'city' => array( 'type' => 'varchar', 'size' => 64, ),
+	'neighbourhood' => array( 'type' => 'varchar', 'size' => 64, ),
 );
 
