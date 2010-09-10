@@ -12,8 +12,7 @@ $db = array(
 $schema = array();
 
 $schema['admins'] = array(
-	'PRIMARY KEY' => 'login',
-	'login' => array( 'type' => 'varchar', 'size' => 64, ),
+	'login' => array( 'type' => 'varchar', 'size' => 64, 'key' => true, ),
 	'password' => array( 'type' => 'varchar', 'size' => 64, ),
 	'created' => array( 'type' => 'datetime', ),
 	'modified' => array( 'type' => 'timestamp', ),
@@ -36,7 +35,6 @@ $schema['checkins'] = array(
 );
 
 $schema['files'] = array(
-	'PRIMARY KEY' => 'path',
 	'path' => array( 'type' => 'varchar', 'size' => 255, 'key' => true, ),
 	'worker_id' => array( 'type' => 'int', 'size' => 11, ),
 	'uploaded' => array( 'type' => 'datetime', ),

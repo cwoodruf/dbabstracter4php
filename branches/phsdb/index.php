@@ -2,6 +2,7 @@
 require_once('view/init.php');
 require_once('phs/init.php');
 require_once('pw/auth.php');
+require_once('db/check.php');
 require_once('controller.php');
 
 $actions = explode("/", $_REQUEST['action']);
@@ -19,5 +20,6 @@ require_once("controllers/$controller.php");
 $class = preg_replace('#(?:^|_)(.)#e',"strtoupper($1)",$controller);
 eval("\$context = new $class;");
 
+$context->action = htmlentities($_REQUEST['action']);
 $context->execute($actions);
 
