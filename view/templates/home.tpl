@@ -1,4 +1,4 @@
 {include file=top.tpl}
-home template!
+<blockquote>Noteboard</blockquote>
 {include file=bottom.tpl}
 

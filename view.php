@@ -3,6 +3,10 @@ require_once('view/smarty/Smarty.class.php');
 
 # base view class
 class View {
+	const DEFROWS = 5;
+	const DEFCOLS = 60;
+	const DEFSIZE = 50;
+	const MAXSIZE = 60;
 	public static $smarty;
 	public static $css;
 	public static $js;

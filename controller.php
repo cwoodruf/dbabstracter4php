@@ -2,7 +2,9 @@
 # base controller class
 class Controller {
 	public $name;
-	public $actions;
+	public $actions; # array with first action removed
+	public $action; # string 
+	public $input;
 
 	public function __construct($name=__CLASS__) {
 		View::assign('this',$this);
@@ -12,6 +14,12 @@ class Controller {
 	public function execute($actions) {
 		if (empty($actions[0])) $actions[0] = 'default';
 		$this->actions = $actions;
+	}
+	
+	public function input($field=null) {
+		if (!is_array($this->input)) return;
+		if (isset($this->input[$field])) return $this->input[$field];
+		return $this->input;
 	}
 
 	public function css() {
