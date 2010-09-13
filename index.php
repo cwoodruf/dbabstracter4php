@@ -10,6 +10,7 @@ $action = array_shift($actions);
 
 if ($action == 'logout') delete_login();
 $ldata = login_response('redirect.php',$_SERVER['PHP_SELF'],'admin_login');
+View::assign('ldata',$ldata);
 
 if (!preg_match('#^\w+$#',$action)) $controller = 'home';
 else $controller = $action;

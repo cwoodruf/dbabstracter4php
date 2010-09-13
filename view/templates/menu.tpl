@@ -5,6 +5,10 @@
 </div>
 
 <div class="menuitem">
+<a href="index.php?action=workers/search">List workers</a>
+</div>
+
+<div class="menuitem">
 <a href="index.php?action=workers/edit">Add new worker</a>
 </div>
 

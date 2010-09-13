@@ -69,6 +69,7 @@ class Workers extends Controller {
 			View::assign('errors',$this->workers->err());
 			return;
 		}
+		View::assign('topmsg','saved worker record');
 		$this->input = $this->workers->getone($this->worker_id);
 	}
 }

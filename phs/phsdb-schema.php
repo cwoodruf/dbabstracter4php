@@ -12,6 +12,7 @@ $db = array(
 $schema = array();
 
 $schema['admins'] = array(
+	'PRIMARY KEY' => 'login',
 	# login is the primary key but I've removed the key => true
 	'login' => array( 'type' => 'varchar', 'size' => 64, ), 
 	'password' => array( 'type' => 'varchar', 'size' => 64, ),
@@ -48,7 +49,7 @@ $schema['worker'] = array(
 	'city' => array( 'type' => 'varchar', 'size' => 64, 'template' => 'tools/cities.tpl', ),
 	'neighbourhood' => array( 'type' => 'varchar', 'size' => 64, ),
 	'password' => array( 'type' => 'password', 'size' => 32, 'hide' => true, ),
-	'voicemail' => array( 'type' => 'varchar', 'size' => 64, 'template' => 'tools/vm.tpl', ),
+	'voicemail' => array( 'type' => 'varchar', 'size' => 64, 'template' => 'workers/vm.tpl', ),
 	'status' => array( 'type' => 'varchar', 'size' => 20, 'template' => 'workers/status.tpl', ),
 	'notes' => array( 'type' => 'text', 'template' => 'workers/descriptionlink.tpl', ),
 );
