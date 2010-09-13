@@ -12,7 +12,8 @@ $db = array(
 $schema = array();
 
 $schema['admins'] = array(
-	'login' => array( 'type' => 'varchar', 'size' => 64, 'key' => true, ),
+	# login is the primary key but I've removed the key => true
+	'login' => array( 'type' => 'varchar', 'size' => 64, ), 
 	'password' => array( 'type' => 'varchar', 'size' => 64, ),
 	'created' => array( 'type' => 'datetime', ),
 	'modified' => array( 'type' => 'timestamp', ),
@@ -41,14 +42,14 @@ $schema['files'] = array(
 );
 
 $schema['worker'] = array(
-	'worker_id' => array( 'type' => 'int', 'size' => 11, 'key' => true, ),
+	'worker_id' => array( 'type' => 'int', 'size' => 11, 'key' => true, 'alt' => 'new worker', ),
 	'name' => array( 'type' => 'varchar', 'size' => 64, ),
 	'handle' => array( 'type' => 'varchar', 'size' => 64, ),
-	'password' => array( 'type' => 'varchar', 'size' => 64, ),
-	'notes' => array( 'type' => 'text', ),
-	'voicemail' => array( 'type' => 'varchar', 'size' => 64, ),
-	'status' => array( 'type' => 'varchar', 'size' => 32, ),
-	'city' => array( 'type' => 'varchar', 'size' => 64, ),
+	'city' => array( 'type' => 'varchar', 'size' => 64, 'template' => 'tools/cities.tpl', ),
 	'neighbourhood' => array( 'type' => 'varchar', 'size' => 64, ),
+	'password' => array( 'type' => 'password', 'size' => 32, 'hide' => true, ),
+	'voicemail' => array( 'type' => 'varchar', 'size' => 64, 'template' => 'tools/vm.tpl', ),
+	'status' => array( 'type' => 'varchar', 'size' => 20, 'template' => 'workers/status.tpl', ),
+	'notes' => array( 'type' => 'text', 'template' => 'workers/descriptionlink.tpl', ),
 );
 

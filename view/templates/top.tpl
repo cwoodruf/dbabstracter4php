@@ -5,4 +5,9 @@
 {$this->js()}
 </head>
 <body>
-{include file=menu.tpl}
+
+{if $errors}
+errors:
+<h3 class='errors'>{$errors}</h3>
+{/if}
+
