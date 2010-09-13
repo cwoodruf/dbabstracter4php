@@ -17,7 +17,7 @@ class View {
 		$smarty->template_dir = 'view/templates';
 		$smarty->compile_dir = 'view/templates_c';
 		$smarty->cache_dir = 'view/cache';
-		$smarty->plugins_dir = array('view/plugins');
+		$smarty->plugins_dir[] = 'view/plugins';
 		self::$smarty = $smarty;
 		self::$tplext = $ext;
 	}

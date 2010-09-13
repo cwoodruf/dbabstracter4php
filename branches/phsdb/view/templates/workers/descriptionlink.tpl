@@ -3,7 +3,7 @@
    onclick="window.open(
 	'index.php?action=workers/description&worker_id={$this->input('worker_id')}',
 	'description',
-	'width=500,height=300,toolbar=no,menubar=no'); return false;"
+	'width=800,height=700,toolbar=no,menubar=no'); return false;"
 >add description</a>
 
 {else}

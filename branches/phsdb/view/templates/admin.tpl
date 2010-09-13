@@ -8,14 +8,19 @@
 
 <h3>Current administrators</h3>
 {admins}
+<ul>
+
 {foreach from=$admins key=login item=admin}
+<li>
+{mailto address=$login} (permissions: {$admin.perms}
 
 {if $ldata.perms == 'superuser' and $ldata.login != $login}
   <a href="index.php?action=admin/delete&login={$login}">delete</a>
 {/if}
-
-{$login} ({$admin.perms})<br>
+)
 
 {/foreach}
+
+</ul>
 
 {include file=bottom.tpl}
