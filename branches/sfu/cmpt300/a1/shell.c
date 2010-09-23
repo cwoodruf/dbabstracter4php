@@ -70,7 +70,6 @@ int main(int argc, char *argv[], char *envp[])
 		}
 
 		if (cpid == 0) { 		/* Code executed by child */
-printf("running %s\n", cargv[0]);
 			execve(cargv[0], cargv, envp);
 			perror("execve");	/* execve() only returns on error */
 			exit(EXIT_FAILURE);
