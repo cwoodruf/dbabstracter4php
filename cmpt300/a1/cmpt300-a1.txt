@@ -1,0 +1,99 @@
+1. Ch1 Q3
+(Points: 4)  
+  	On early computers, every byte of data read or written was handled by the CPU (i. e., there was no DMA). What implications does this have for multiprogramming?
+
+Any interrupt process is treated as if it were an ordinary user level process - albeit with possibly higher or lower priority. 
+So any i/o that normally would be taken care of by hardware external to the cpu such as  DMA, 
+for example, takes up cpu time and slows the execution of any other program running on the system down. 
+
+2. Ch1 Q7
+(Points: 3)  
+  	Which of the following instructions should be allowed only in kernel mode?
+(a) Disable all interrupts.
+(b) Read the time- of- day clock.
+(c) Set the time- of- day clock.
+(d) Change the memory map.
+
+a, c and d affect all user level programs so they should not be changed by user level programs. 
+
+b reading the time of day clock does not affect user level programs so it could be implemented as a user level instruction.
+
+
+3. Ch1 Q8
+(Points: 4)  
+  	Consider a system that has two CPUs and each CPU has two threads (hyperthreading). Suppose three programs, P0, P1, and P2, are started with run times of 5, 10 and 20 mses, respectively. How long will it take to complete the execution of these programs? Assume that all three programs are 100% CPU bound, do not block during execution, and do not change CPUs once assigned.
+
+It would take 20 ms as there are enough threads for the 5 and 10 ms programs to run on one cpu simultaneously with the 20 ms process.
+
+4. Ch1 Q10
+(Points: 4)  
+  	Consider a computer system that has cache memory, main memory (RAM) and disk, and the operating system uses virtual memory. It takes 2 nsec to access a word from the cache, 10 nsec to access a word from the RAM, and 10 ms to access a word from the disk. If the cache hit rate is 95% and main memory hit rate (after a cache miss) is 99%, what is the average time to access a word?
+
+The average time is the expected value of all three situations: 
+ev = P(cache hit) * (cache time) + P(memory hit) * (memory time) + P(disk hit) * (disk time) 
+ev = .95 * 2ns + (1 - .95) *.99 * 10ns + ((1 - .95) - (1 - .95) * .99) * (10 * 10 ^ 6)ns 
+ev = .95 * 2ns + .0495 * 10ns + 0.0005 * 10,000,000ns 
+ev = 5002.395ns 
+
+It will take approximately 5 microseconds on average to access a word with this operating system. 
+
+5. Ch1 Q11
+(Points: 4)  
+  	An alert reviewer notices a consistent spelling error in the manuscript of an operating systems textbook that is about to go to press. The book has approximately 700 pages, each with 50 lines of 80 characters each. How long will it take to electronically scan the text for the case of the master copy being in each of the levels of memory of Fig. 1- 9? For internal storage methods, consider that the access time given is per char-acter, for disk devices assume the time is per block of 1024 characters, 
+        and for tape assume the time given is to the start of the data with subsequent access at the same speed as disk access.
+
+The total number of characters is 700 * 50 * 80 = 2,800,000. The total number of words for a 32 bit machine would 
+be 2,800,000 / 4 or 700000 words as 4 ascii characters can fit into a 32 bit word.
+
+registers: this is too big to fit into a register
+cache: 2ns * 700000 = 1.4 * 10^6 ns = 1.4 ms
+main memory: 10ns * 700000 = 7 * 10^7 ns = 70 ms
+magnetic disk: 10ms * 700000 / 1024 + 70 ms = 6905.9375 ms
+magnetic tape: 100000 ms + 6905.9375  = 106905.9375 ms
+
+6. Ch1 Q18
+(Points: 3)  
+  	For each of the following system calls, give a condition that causes it to fail: fork, exec, and unlink.
+
+fork can fail if there are too many processes running. The maximum number of processes is a configurable parameter in the operating system kernel. There is a system wide parameter NPROC in linux and a per user parameter called MAXUPRC that controls the number of processes allowed.
+
+exec can fail if the file does not have executable permissions or is not executable by the current user.
+
+unlink can fail if the file being unlinked doesn't exist or if the user does not have write permissions for the directory in which the file resides (note its the directory permission that is the important one).
+
+
+7. Ch1 Q21
+(Points: 4)  
+  	Suppose that a 10- MB file is stored on a disk on the same track (track #: 50) in consecutive sectors. The disk arm is currently situated over track number 100. How long will it take to retrieve this file from the disk? Assume that moving the arm from one cylinder to the next takes about 1 ms and it takes about 5 ms for the sector where the beginning of the file is stored to rotate under the head. Also, assume that reading occurs at a rate of 100 MB/s.
+
+time = (time to get to cylinder) + (time to get to start of time) + (time to read file)
+time = (50 * 1 ms) + (5 ms) + (100 ms) = 155 ms
+
+8. Ch1 Q26
+(Points: 4)  
+  	Figure 1-23 (page 61) shows that a number of UNIX system calls have no Win32 API equivalents. For each of the calls listed as having no Win32 equivalent, what are the consequences for a programmer of converting a UNIX program to run under Windows?
+
+[Answer only for the following four cases:]
+
+[link]
+The programmer can only use one path for any given file. This may result in more configuration data being required or more copies of the same files used by different programs. Deleting a file will certainly delete the entire file.
+
+[mount/umount]
+The programmer must know the name of the device they are writing to if it is not a standard system device. Mounting devices on the fly from a user program may be more difficult if not impossible.
+
+[chmod]
+In early versions of windows any user could change any file in the system. Thus when modifying a file in a program its imperative that you know that you have the right file.
+
+[kill]
+The programmer must be careful to make sure programs they create terminate in a predictable way as it may be very difficult to terminate the program once it is running - for example, a user may have to reboot the computer to stop programs that run on and use excessive resources.
+
+
+9. Programming
+(Points: 10)  
+  	(a) Write a shell that is similar to Fig. 1-19 but contains enough code that it actually works so you can test it. Include your output to show it is working.
+
+(b) Also add redirection of input and output, pipes, and background jobs. Include your output to show it is working.
+
+
+
+
