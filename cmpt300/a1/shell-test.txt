@@ -1,0 +1,45 @@
+cal@cal-dual-nic:~/Desktop/sfu/cmpt300/a1$ ./shell
+Ctrl-C to exit. Enter a command: /bin/ls
+arg[0] /bin/ls
+cmpt300-a1.txt	echotest.pl  shell  shell.c  test.sh
+exited, status=0
+Ctrl-C to exit. Enter a command: /bin/ls > lsout
+arg[0] /bin/ls
+exited, status=0
+Ctrl-C to exit. Enter a command: /bin/grep -H test lsout
+arg[0] /bin/grep
+arg[1] -H
+arg[2] test
+arg[3] lsout
+lsout:echotest.pl
+lsout:test.sh
+exited, status=0
+Ctrl-C to exit. Enter a command: /bin/grep -H test <lsout
+arg[0] /bin/grep
+arg[1] -H
+arg[2] test
+(standard input):echotest.pl
+(standard input):test.sh
+exited, status=0
+Ctrl-C to exit. Enter a command: /bin/ls | /bin/grep test
+arg[0] /bin/ls
+exited, status=0
+arg[0] /bin/grep
+arg[1] test
+echotest.pl
+test.sh
+exited, status=0
+Ctrl-C to exit. Enter a command: /bin/ls | /bin/grep test | /bin/grep -v echo
+arg[0] /bin/ls
+exited, status=0
+arg[0] /bin/grep
+arg[1] test
+exited, status=0
+arg[0] /bin/grep
+arg[1] -v
+arg[2] echo
+test.sh
+exited, status=0
+Ctrl-C to exit. Enter a command: ^C
+cal@cal-dual-nic:~/Desktop/sfu/cmpt300/a1$ 
+
