@@ -8,7 +8,7 @@
 
 #define MAXCARGC 255
 void getparse(char **cargv, int *infd, int *outfd, char *cmd);
-void dofork(char **cargv, char **envp, int *infd, int *outfd, char *cmd);
+void dofork(char **cargv, char **envp, int *infd, int *outfd);
 int pfd[2] = {-1,-1}; /* for piping */
 
 int main(int argc, char *argv[], char *envp[])
@@ -25,7 +25,7 @@ int main(int argc, char *argv[], char *envp[])
 
 	while (1) {
 		getparse(cargv,&infd,&outfd,cmd);
-		dofork(cargv,envp,&infd,&outfd,cmd);
+		dofork(cargv,envp,&infd,&outfd);
 	}
 }
 
@@ -153,7 +153,7 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
  * if there is a command in cmd then that means you are doing a pipe
  * partly adapted from execve and waitpid linux man page examples 
  */
-void dofork(char **cargv, char **envp, int *infd, int *outfd, char *cmd) {
+void dofork(char **cargv, char **envp, int *infd, int *outfd) {
 
 	pid_t cpid, w;
 	int status, i;
