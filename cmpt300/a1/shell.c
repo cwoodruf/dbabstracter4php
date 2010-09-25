@@ -197,7 +197,7 @@ pid_t dofork(char **cargv, char **envp, int *infd, int *outfd, int *background) 
 	} else {			/* Code executed by parent */
 
 		/* to run a process in the background don't invoke wait* */
-		if (*background) return;
+		if (*background) return cpid;
 
 		/* otherwise check the exit status */
 		dowait(cpid);
