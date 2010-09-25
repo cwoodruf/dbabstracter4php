@@ -1,4 +1,4 @@
-/* $Id$ */
+/* Cal Woodruff 301013983 cwoodruf@sfu.ca cmpt300 Harbour Centre Fall 2010 Assignment 1 Q 9 */
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
