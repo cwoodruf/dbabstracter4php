@@ -1,5 +1,6 @@
-<html>
-<head>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en-us" xml:lang="en-us" xmlns="http://www.w3.org/1999/xhtml"><head>
 <title>Emily Dickinson</title>
 <style>
 body {
@@ -7,43 +8,35 @@ body {
 	font-size: 14pt;
 	text-align: left;
 }
-div.pic {
-	float: left;
-}
-div.flowers {
-	background: url(http://photographicdictionary.com/images/f/flower.jpg);
-	width: 275px;
-	height: 275px;
-	border: 5px red solid;
-}
 span.picturedef {
-	border-bottom: red 2px solid;
+	background: yellow;
 }
 span.picturedef:hover {
 	background: red;
 }
-div.clear {
-	clear: both;
+span.picturedef:hover:after {
+	top: 110px;
+	left: 100px;
+	border: red 5px solid;
+	position: absolute;
 }
 div.line {
 }
 span.flowers:hover:after {
 	content: " " url(http://photographicdictionary.com/images/f/flower.jpg);
-	border: red 5px solid;
-	position: absolute;
 }
 span.sun:hover:after {
 	content: " " url(http://photographicdictionary.com/images/s/sun.jpg);
-	border: red 5px solid;
-	position: absolute;
 }
 </style>
 </head>
 <body>
-<div class="line">The <span class="sun picturedef">sun</span> - as common - went abroad -
-<div class="line">The <span class="flowers picturedef">flowers</span> - accustomed - blew,</div>
+<div class="poem">
+<div class="line">The <span class="defs picturedef sun">sun</span> - as common - went abroad -</div>
+<div class="line">The <span class="defs picturedef flowers">flowers</span> - accustomed - blew,</div>
 <div class="line">As if no soul - that solstice passed -</div>
 <div class="line">Which maketh all things - new -</div>
+</div>
 </body>
 </html>
 
