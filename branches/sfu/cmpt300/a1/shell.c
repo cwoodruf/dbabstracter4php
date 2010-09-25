@@ -130,12 +130,6 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd, int *background, p
 			case '&':
 				*background = 1;
 				break;
-			case '!': /* not a standard shell operator but its the equivalent to "fg" */
-printf("child process %d\n", cpid);
-				*background = 0;
-				if (cpid >= 0) dowait(cpid);
-				cpid = -1; /* in case someone types !! */
-				break;
 			default: 
 				/* we assume with redirection/backgrounding that we have our command already */
 				if (redirection || *background) break;
