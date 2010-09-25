@@ -1,3 +1,4 @@
+/* $Id$ */
 #include <sys/wait.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,8 +8,10 @@
 #include <sys/stat.h>
 
 #define MAXCARGC 255
-void getparse(char **cargv, int *infd, int *outfd, char *cmd);
-void dofork(char **cargv, char **envp, int *infd, int *outfd);
+void getparse(char **cargv, int *infd, int *outfd, char *cmd, int *background, pid_t cpid);
+pid_t dofork(char **cargv, char **envp, int *infd, int *outfd, int *background);
+void dowait(pid_t cpid);
+
 int pfd[2] = {-1,-1}; /* for piping */
 
 int main(int argc, char *argv[], char *envp[])
@@ -17,20 +20,22 @@ int main(int argc, char *argv[], char *envp[])
 	/* for child processes */
 	int infd;			/* input redirect file descriptor */
 	int outfd;			/* output redirect file descriptor */
+	int cpid;			/* child process id */
+	int background = 0;   		/* for daemonizing */
 	char cmd[MAXCARGC] = ""; 	/* the raw command */
 	char *cargv[MAXCARGC];   	/* the argv list created from the command */
 
 	cargv[0] = 0;
-	infd = outfd = -1;
+	cpid = infd = outfd = -1;
 
 	while (1) {
-		getparse(cargv,&infd,&outfd,cmd);
-		dofork(cargv,envp,&infd,&outfd);
+		getparse(cargv,&infd,&outfd,cmd,&background,cpid);
+		cpid = dofork(cargv,envp,&infd,&outfd,&background);
 	}
 }
 
 /* get and parse entered command */
-void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
+void getparse(char **cargv, int *infd, int *outfd, char *cmd, int *background, pid_t cpid) {
 
 	char cbuff[MAXCARGC] = "";	/* command buffer */
 	char *infrom; 			/* input redirection */
@@ -57,7 +62,7 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
 		if (infd >= 0) close(*infd); 
 		if (outfd >= 0) close(*outfd);
 		*infd = *outfd = -1;
-		redirection = 0;
+		*background = redirection = 0;
 
 		/* get a command if we aren't in the middle of a pipe */
 		if (strlen(cmd) == 0) {
@@ -67,7 +72,7 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
 		} else {
 			/* we are doing the second part of a pipe */
 			if (pfd[0] == -1) {
-				perror("no pipe initiated!");
+				perror("no pipe initiated");
 				exit(EXIT_FAILURE);
 			}
 			*infd = pfd[0];
@@ -122,9 +127,18 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
 					}
 				}
 				break;
+			case '&':
+				*background = 1;
+				break;
+			case '!': /* not a standard shell operator but its the equivalent to "fg" */
+printf("child process %d\n", cpid);
+				*background = 0;
+				if (cpid >= 0) dowait(cpid);
+				cpid = -1; /* in case someone types !! */
+				break;
 			default: 
-				/* we assume with redirection that we have our command already */
-				if (redirection) break;
+				/* we assume with redirection/backgrounding that we have our command already */
+				if (redirection || *background) break;
 				cchar = 0; 
 				if ((carg = malloc(strlen(ctok)+1)) != NULL) {
 					strcpy(carg,ctok);
@@ -153,10 +167,10 @@ void getparse(char **cargv, int *infd, int *outfd, char *cmd) {
  * if there is a command in cmd then that means you are doing a pipe
  * partly adapted from execve and waitpid linux man page examples 
  */
-void dofork(char **cargv, char **envp, int *infd, int *outfd) {
+pid_t dofork(char **cargv, char **envp, int *infd, int *outfd, int *background) {
 
-	pid_t cpid, w;
-	int status, i;
+	pid_t cpid;
+	int i;
 
 	cpid = fork();
 	if (cpid == -1) {
@@ -166,10 +180,13 @@ void dofork(char **cargv, char **envp, int *infd, int *outfd) {
 
 	if (cpid == 0) { 		/* Code executed by child */
 
-		i = 0;
-		while (cargv[i]) {
-			fprintf(stderr, "arg[%d] %s\n", i, cargv[i]);
-			i++;
+		/* display what we are sending execve unless we background */
+		if (!*background) {
+			i = 0;
+			while (cargv[i]) {
+				fprintf(stderr, "arg[%d] %s\n", i, cargv[i]);
+				i++;
+			}
 		}
 		if (*infd >= 0) {
 			close(STDIN_FILENO);
@@ -184,22 +201,38 @@ void dofork(char **cargv, char **envp, int *infd, int *outfd) {
 		exit(EXIT_FAILURE);
 
 	} else {			/* Code executed by parent */
-		do {
-			w = waitpid(cpid, &status, WUNTRACED | WCONTINUED);
-			if (w == -1) {
-				perror("waitpid");
-				exit(EXIT_FAILURE);
-			}
 
-			if (WIFEXITED(status)) {
-				printf("exited, status=%d\n", WEXITSTATUS(status));
-			} else if (WIFSIGNALED(status)) {
-				printf("killed by signal %d\n", WTERMSIG(status));
-			} else if (WIFSTOPPED(status)) {
-				printf("stopped by signal %d\n", WSTOPSIG(status));
-			} else if (WIFCONTINUED(status)) {
-				printf("continued\n");
-			}
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		/* to run a process in the background don't invoke wait* */
+		if (*background) return;
+
+		/* otherwise check the exit status */
+		dowait(cpid);
 	}
+	return cpid;
 }
+
+/* run the waitpid func to find out what the exit status was for the child */
+void dowait(pid_t cpid) {
+
+	pid_t w;
+	int status;
+
+	do {
+		w = waitpid(cpid, &status, WUNTRACED | WCONTINUED);
+		if (w == -1) {
+			perror("waitpid");
+			exit(EXIT_FAILURE);
+		}
+
+		if (WIFEXITED(status)) {
+			printf("exited, status=%d\n", WEXITSTATUS(status));
+		} else if (WIFSIGNALED(status)) {
+			printf("killed by signal %d\n", WTERMSIG(status));
+		} else if (WIFSTOPPED(status)) {
+			printf("stopped by signal %d\n", WSTOPSIG(status));
+		} else if (WIFCONTINUED(status)) {
+			printf("continued\n");
+		}
+	} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+}
+
