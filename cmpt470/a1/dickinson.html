@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Emily Dickinson</title>
+<style>
+body {
+	font-family: helvetica,arial,sans-serif;
+	font-size: 14pt;
+	text-align: left;
+}
+div.pic {
+	float: left;
+}
+div.flowers {
+	background: url(http://photographicdictionary.com/images/f/flower.jpg);
+	width: 275px;
+	height: 275px;
+	border: 5px red solid;
+}
+span.picturedef {
+	border-bottom: red 2px solid;
+}
+span.picturedef:hover {
+	background: red;
+}
+div.clear {
+	clear: both;
+}
+div.line {
+}
+span.flowers:hover:after {
+	content: " " url(http://photographicdictionary.com/images/f/flower.jpg);
+	border: red 5px solid;
+	position: absolute;
+}
+span.sun:hover:after {
+	content: " " url(http://photographicdictionary.com/images/s/sun.jpg);
+	border: red 5px solid;
+	position: absolute;
+}
+</style>
+</head>
+<body>
+<div class="line">The <span class="sun picturedef">sun</span> - as common - went abroad -
+<div class="line">The <span class="flowers picturedef">flowers</span> - accustomed - blew,</div>
+<div class="line">As if no soul - that solstice passed -</div>
+<div class="line">Which maketh all things - new -</div>
+</body>
+</html>
+
