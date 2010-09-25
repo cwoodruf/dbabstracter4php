@@ -1,11 +1,35 @@
+## annotated command output for the shell program
+## Cal Woodruff 301013983 cwoodruf@sfu.ca cmpt300 Harbour Centre fall 2010
+
 cal@cal-dual-nic:~/Desktop/sfu/cmpt300/a1$ ./shell
+
 Ctrl-C to exit. Enter a command: /bin/ls
 arg[0] /bin/ls
 cmpt300-a1.txt	echotest.pl  shell  shell.c  test.sh
 exited, status=0
+
+## background a process - both firefox and ls are running
+Ctrl-C to exit. Enter a command: /usr/bin/firefox &
+Ctrl-C to exit. Enter a command: /bin/ls
+arg[0] /bin/ls
+cmpt300-a1.txt	echotest.pl  lsout  shell  shell.c  shell-test.txt  test.sh
+exited, status=0
+
+
+## redirect to a file
 Ctrl-C to exit. Enter a command: /bin/ls > lsout
 arg[0] /bin/ls
 exited, status=0
+
+## get input from a file vs command line
+Ctrl-C to exit. Enter a command: /bin/grep -H test <lsout
+arg[0] /bin/grep
+arg[1] -H
+arg[2] test
+(standard input):echotest.pl
+(standard input):test.sh
+exited, status=0
+
 Ctrl-C to exit. Enter a command: /bin/grep -H test lsout
 arg[0] /bin/grep
 arg[1] -H
@@ -14,13 +38,8 @@ arg[3] lsout
 lsout:echotest.pl
 lsout:test.sh
 exited, status=0
-Ctrl-C to exit. Enter a command: /bin/grep -H test <lsout
-arg[0] /bin/grep
-arg[1] -H
-arg[2] test
-(standard input):echotest.pl
-(standard input):test.sh
-exited, status=0
+
+## some piping examples
 Ctrl-C to exit. Enter a command: /bin/ls | /bin/grep test
 arg[0] /bin/ls
 exited, status=0
@@ -29,6 +48,8 @@ arg[1] test
 echotest.pl
 test.sh
 exited, status=0
+
+## multiple pipes
 Ctrl-C to exit. Enter a command: /bin/ls | /bin/grep test | /bin/grep -v echo
 arg[0] /bin/ls
 exited, status=0
@@ -40,6 +61,7 @@ arg[1] -v
 arg[2] echo
 test.sh
 exited, status=0
+
 Ctrl-C to exit. Enter a command: ^C
 cal@cal-dual-nic:~/Desktop/sfu/cmpt300/a1$ 
 
