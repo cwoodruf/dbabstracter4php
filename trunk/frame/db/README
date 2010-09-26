@@ -11,34 +11,31 @@ Object oriented wrapper for database operations.
 
 It is intended to be easy to port and extend.
 
-Works with php 5.2, will probably work with php 5.3.
+Usage:
+	[in the frame directory]
+	db/buildmodels.php models/mydb mydb 
 
-To use save the dbabstracter code to a directory and include the rdbms specific
-library for your database and the common library. For example:
+	[will build class *-base.php files for tables in mydb]
+	
+	vim models/mydb/MydbDB.php 
+	[add login details]
 
- <?php
- // you define this must contain a schema array and a db array see
- // example-schema.php and mysql2schema.pl in the svn tree
+	[make your own extensions of the *-base.php classes to change them]
 
- require_once("my-schema.php"); 
- require_once(".dbabstracter/abstract-mysql.php");
- require_once(".dbabstracter/abstract-common.php");
+You can also rebuild individual tables:
 
- // define some table related classes here
- class MyEntity extends Entity {
-     function __construct() {
-	 global $schema, $db;
-	 parent::__construct($db,$schema['myentity'],'myentity');
-     }
- }
+	db/buildmodels.php models/mydb mydb mytable
 
- class MyRelation extends Relation {
-     function __construct() {
-	 global $schema, $db;
-	 parent::__construct($db,$schema['myrelation'],'myrelation');
-     }
- }
- ?>
+Each class file contains schema information in a public $schema variable
+that can be used as an aid for automatically making forms etc based on 
+the table information. 
+
+Each class inherits methods from either the Entity or Relation base class
+defined in abstract-common.php. An Entity is a stand alone table that has
+only a single field as a key (if any). A Relation has a multi field key.
+
+If you make fields with the pattern {tablename}_id and use them consistently
+the code generator will add the table information to the $primarykey.
 
 Currently only mysql is supported. However, it should be relatively easy to port to
 another rdbms. 

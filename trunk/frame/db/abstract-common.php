@@ -16,17 +16,38 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
 class Entity extends AbstractDB {
 	public $table;
 	public $schema;
+	public $dbname;
+	public $dbhost;
 	public $primary;
 		
 	public function __construct($db,$schema,$tb) {
 		parent::__construct($db);
 
+		$this->dbname = $db['db'];
+		$this->dbhost = $db['host'];
+
 		if ($tb and is_array($schema)) {
 			$this->table = $tb;
 			$this->schema = $schema;
-			if (isset($schema['PRIMARY KEY'])) 
-				$this->primary = $schema['PRIMARY KEY'];
-			else $this->primary = $tb."_id";
+			$this->findprimary();
+		}
+	}
+
+	public function findprimary() {
+		# note that for some tables there may not be a primary key
+		if (isset($schema['PRIMARY KEY'])) {
+			$this->primary = $schema['PRIMARY KEY'];
+
+		} else if (isset($schema[$table.'_id'])) {
+			$this->primary = $table.'_id';
+
+		} else {
+			foreach ($this->schema as $field => $fdata) {
+				if ($fdata['key']) {
+					$this->primary = $field;
+					break;
+				}
+			}
 		}
 	}
 
@@ -51,6 +72,8 @@ class Entity extends AbstractDB {
 
 	public function upd($id,$data) {
 		try {
+			if (empty($this->primary)) 
+				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			$udata = array();
@@ -71,6 +94,8 @@ class Entity extends AbstractDB {
 
 	public function del($id) {
 		try {
+			if (empty($this->primary)) 
+				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			$this->run("delete from {$this->table} where {$this->primary}=%u", $id);
@@ -118,6 +143,8 @@ class Entity extends AbstractDB {
 
 	public function getone($id) {
 		try {
+			if (empty($this->primary)) 
+				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
 			$this->run("select * from {$this->table} where {$this->primary}='%s'", $id);
@@ -145,8 +172,8 @@ class Entity extends AbstractDB {
  */
 class Relation extends Entity {
 
-	public function __construct($db,$schema,$tb) {
-		parent::__construct($db,$schema,$tb);
+	public function __construct($db,$schema,$table) {
+		parent::__construct($db);
 	}
 
 	/**

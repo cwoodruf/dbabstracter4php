@@ -34,6 +34,7 @@ if (isset($thistable)) {
 
 # otherwise make a stub for db login information
 } else {
+	print "writing $dbfile\n";
 	if (($fh = fopen($dbfile,'w')) !== false) {
 		$classdef = <<<PHP
 <?php
@@ -62,30 +63,24 @@ foreach ($schema as $table => $fields) {
 	$class = ucfirst($table);
 	$tbschema = indent_var_export(var_export($schema[$table],true),($multiline=true));
 	$baseattribs = <<<PHP
-
-	# where this class comes from
-	public \$dbname = '$dbname';
-	public \$dbhost = '$dbhost';
-	public \$table = '$table';
-
-	# login information
-	private \$db;
-
-	# for building forms
-	public \$schema = $tbschema;
+	function __construct() {
+		parent::__construct(
+			$dbclass::\$db, 
+			# \$this->schema: for building forms among other things
+			$tbschema,
+			'$table'
+		);
+	}
 
 PHP;
-	if (isset($schema['PRIMARY KEY'])) {
+	if (isset($schema[$table]['PRIMARY KEY'])) {
+		$primarykey = indent_var_export(var_export($schema[$table]['PRIMARY KEY'],true));
 		$classdef = <<<PHP
 <?php
 $generatedby
 
 class {$class}Relation extends Relation {
 $baseattribs
-	function __construct() {
-		\$this->db = $dbclass::\$db;
-		parent::__construct(\$this->db, \$this->schema, \$this->table);
-	}
 }
 
 PHP;
@@ -96,27 +91,25 @@ $generatedby
 
 class {$class}Entity extends Entity {
 $baseattribs
-	function __construct() {
-		\$this->db = $dbclass::\$db;
-		parent::__construct(\$this->db, \$this->schema, \$this->table);
-	}
 }
 
 PHP;
 	}
-	if (($fh = fopen("$modeldir/{$table}_base.php",'w')) !== false) {
+	$classfile = "$modeldir/{$table}_base.php";
+	print "writing $classfile\n";
+	if (($fh = fopen($classfile,'w')) !== false) {
 		fwrite($fh,$classdef);
 		fclose($fh);
 	} else {
-		die("can't open $modeldir/$table.php to write!");
+		die("can't open $classfile to write!");
 	}
 }
 
 function indent_var_export($php,$multiline=false) {
 	$php = preg_replace("#\s+#m"," ",$php);
 	if ($multiline) {
-		$php = preg_replace("#('[\w ]+' => array)#","\n\t\t$1",$php);
-		$php = preg_replace("#\)$#","\n\t)",$php);
+		$php = preg_replace("#('[\w ]+' => array)#","\n\t\t\t\t$1",$php);
+		$php = preg_replace("#\)$#","\n\t\t\t)",$php);
 	}
 	return $php;
 }
