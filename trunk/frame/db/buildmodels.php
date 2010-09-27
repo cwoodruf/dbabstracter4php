@@ -1,12 +1,13 @@
 #!/usr/local/bin/php
 <?php
 print "run both mysql2schema.pl and makeclasses.php to build out classes for a database\n";
+print "usage {$_SERVER['PHP_SELF']} {database name} [model directory: defaults to models/base]\n";
 
-$modeldir = $argv[1];
-if (empty($modeldir)) die("need a model directory!\n");
+$db = $argv[1];
+if (empty($db)) die("need name of database!\n");
 
-$db = $argv[2];
-if (empty($db)) die("need name of datbase!\n");
+$modeldir = $argv[2];
+if (empty($modeldir)) $modeldir = "models/base";
 
 $thistable = $arg[3];
 # this arg can be empty

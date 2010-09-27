@@ -163,6 +163,21 @@ class Entity extends AbstractDB {
 		if ($fdata['key']) return true;
 		return false;
 	}
+
+	/** 
+	 * save an error message or print it
+	 */
+	public function err(Exception $e = null) {
+		if ($e != null) {
+			$this->error = $e->getMessage();
+			if (!QUIET) die($this->error."<br>\n".$this->query);
+		}
+		return $this->error;
+	} 
+	
+	public function query() {
+		return $this->query;
+	}
 }
 
 /**

@@ -130,14 +130,5 @@ abstract class AbstractDB {
 		}
 		return $quote.mysql_real_escape_string($str,$this->conn).$quote;
 	}
-	/** 
-	 * save an error message or print it
-	 */
-	public function err(Exception $e = null) {
-		if ($e != null) {
-			$this->error = $e->getMessage();
-		}
-		return $this->error;
-	} 
 }
 
