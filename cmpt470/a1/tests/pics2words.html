@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en-us" xml:lang="en-us" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Image map</title>
+<style type=text/css>
+#map {
+	position: absolute;
+	background: url(map.jpg) no-repeat;
+	width: 400px;
+	height: 200px;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+}
+#map li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#map li a {
+	text-decoration: none;
+	position: absolute;
+	display: block;
+}
+#map li a span {
+	display: none;
+}
+#map li a:hover span {
+  position:relative;
+  display:block;
+  margin-left:50px;
+  margin-top: 50px;
+  width:200px;
+  left:20px;
+  top:20px;
+  padding:5px;
+  border:1px solid #000;
+  background:#fff;
+  text-decoration:none;
+  color:#000;
+  opacity:0.8;
+}
+
+#map:hover a.bordered {
+  border: 1px white solid;
+}
+
+#map a.bunny {
+  top:20px;
+  left:60px;
+  width:80px;
+  height:90px;
+}
+#map a.parrot {
+  top:1px;
+  left:275px;
+  width:50px;
+  height:50px;
+}
+#map a.snail {
+  top:135px;
+  left:30px;
+  width:50px;
+  height:50px;
+}
+#map a.dog {
+  top:100px;
+  left:150px;
+  width:115px;
+  height:95px;
+}
+#map a.cat {
+  top:65px;
+  left:315px;
+  width:70px;
+  height:120px;
+}
+</style>
+<body>
+<a id="wrapper" href="#not">
+<ul id="map">
+    <li><a class="bordered bunny" href="javascript: void(0);"><span><b>Bunny Rabbit</b><br>
+        Cute and fuzzy, with long ears and a fluffy tail. this cuddly bunny
+        makes a great pet.</span></a></li>
+    <li><a class="bordered parrot" href="javascript: void(0);"><span><b>Parrot</b><br>
+        With a lifespan of up to 40 years, these bright, colorful birds
+        are wonderful life-long pets. One of only a few birds
+        capable of learning to speak, parrots are intelilgent and
+        highly social animals.</span></a></li>
+    <li><a class="bordered snail" href="javascript: void(0);"><span><b>Snail</b><br>
+        Snails are a wonderful addition to any aquarium-- just make
+        sure that its tank-mates aren't going to eat it! Snails say
+        "Meow."</span></a></li>
+    <li><a class="bordered dog" href="javascript: void(0);"><span><b>Dog</b><br>
+        Man's best friend, a protector and commrade of humans for
+        centuries, dogs are faithful, loyal and loving companions.
+        </span></a></li>
+    <li><a class="bordered cat" href="javascript: void(0);"><span><b>Cat</b><br>
+        Another popular pet, these felines were once viewd as a
+        sacred creature amont the ancient Egyptians. Independant,
+        sociable, and with a rumbling purr, cats make wonderful
+        pets.</span></a></li>
+</ul>
+</a>
+</body>
+</html>
+
