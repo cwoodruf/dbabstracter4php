@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title> Stu Nicholls | CSS Image Map #10</title>
+<meta name="Author" content="Stu Nicholls" />
+
+<style type="text/css">
+/* set up the font to be used for the page */
+body {font-family: tahoma; arial, sans-serif;}
+
+/* set the size of the definition list &lt;dl&gt; and add the background image */
+#imap {display:block; width:400px; height:240px; background:url(beatles_basic.jpg) no-repeat; position:relative;}
+
+/* set up the definition list &lt;dt&gt;&lt;a&gt; to hold the background image for the hover state */
+#imap a#title {display:block; width:400px; height:0; padding-top:240px; overflow:hidden; position:absolute; left:0; top:0; background:transparent url(beatles_hover.jpg) no-repeat 400px 400px; cursor:default;}
+/* the hack for IE pre IE6 */
+* html #imap a#title {height:240px; he\ight:0;}
+
+/* the &lt;dt&gt;&lt;a&gt; hover style to move the background image to position 0 0*/
+#imap a#title:hover {background-position: 0 0; z-index:10;}
+
+/* place the &lt;dd&gt;s in the correct absolute position */
+#imap dd {position:absolute; padding:0; margin:0;}
+#imap #picp {left:36px; top:46px; z-index:20;}
+#imap #picr {left:113px; top:76px; z-index:20;}
+#imap #picj {left:192px; top:50px; z-index:20;}
+#imap #picg {left:262px; top:60px; z-index:20;}
+
+/* style the &lt;dd&gt;&lt;a&gt; links physical size and the background image for the hover */
+#imap a#paul, #imap a#ringo, #imap a#john, #imap a#george {display:block; width:85px; height:85px; background:transparent url(hover.gif) -100px -100px no-repeat; text-decoration:none; z-index:20;}
+
+/* style the span text so that it is not initially displayed */
+#imap a span, #imap a:visited span {display:none;}
+
+/* move the link background image to position 0 0 when hovered */
+#imap a#paul:hover, #imap a#ringo:hover, #imap a#john:hover, #imap a#george:hover {background-position:0 0;}
+
+/* define the common styling for the span text */
+#imap a:hover span {position:absolute;  width:388px; display:block; font-family:arial; font-size:12px; background:#fff; color:#000; border:1px solid #000; padding:5px;}
+/* the hack for IE pre IE6 */
+* html #imap a:hover span {width:400px; w\idth:388px;}
+
+/* move the span text to a common position at the bottom of the image map */
+#imap a#paul:hover span {left:-36px; top:200px;}
+#imap a#ringo:hover span {left:-113px; top:170px;}
+#imap a#john:hover span {left:-192px; top:196px;}
+#imap a#george:hover span {left:-262px; top:186px;}
+
+/* add the style for the link span text - first line */
+#imap a span:first-line {font-weight:bold; font-style:italic;}
+
+#ads {margin-top:150px;}
+</style>
+</head>
+
+<!--[if lte IE 6]>
+<style>
+#ads {display:none;}
+#adsie {clear:both; width:750px; margin-top:150px;}
+</style>
+<![endif]-->
+
+<body>
+
+<h2>A CSS Image Map.</h2>
+<h3>Example #10</h3>
+<h4>Styling the first line of the text</h4>
+<dl id="imap">
+<dt><a id="title" href="#nogo" title="The Beatles">The Beatles</a></dt>
+<dd id="picp"><a id="paul" title="Paul McCartney" href="#nogo"><span>Paul McCartney - Bass Guitar and Vocals<br /><br />Paul McCartney's song, Yesterday, recently voted the most popular song of the century by a BBC poll, was initially composed without lyrics. Paul used the working title 'scrambled eggs' before coming up with the final words.</span></a></dd>
+<dd id="picr"><a id="ringo" title="Ringo Starr" href="#nogo"><span>Ringo Starr - Drums<br /><br />Dear Prudence was written by John and Paul about Mia Farrow's sister, Prudence, when she wouldn't come out and play with Mia and the Beatles at a religious retreat in India.</span></a></dd>
+<dd id="picj"><a id="john" title="John Lennon" href="#nogo"><span>John Lennon - Guitar and Vocals<br /><br />In 1962, The Beatles won the Mersyside Newspaper's biggest band in Liverpool contest principally because they called in posing as different people and voted for themselves numerous times.</span></a></dd>
+<dd id="picg"><a id="george" title="George Harrison" href="#nogo"><span>George Harrison - Lead Guitar and Vocals<br /><br />The Beatles' last public concert was held in San Francisco's Candlestick Park on August 29, 1966.</span></a></dd>
+</dl>
+
+<div id="ads">
+<object data="../../ads.htm" type="text/html" width="728" height="90"></object>
+</div>
+<!--[if lte IE 6]>
+<div id="adsie">
+<script type="text/javascript">
+google_ad_client = "pub-6651950180071236";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "697210";
+google_color_url = "E09222";
+google_color_text = "330000";
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+</div>
+<![endif]-->
+
+</body>
+</html>
