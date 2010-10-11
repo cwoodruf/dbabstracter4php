@@ -13,5 +13,8 @@
 
 {include file=tools/dump.tpl data=$note class="bordered white"}
 
+{* $note must exist *}
+{include file=viewers.tpl}
+
 {include file=bottom.tpl}
 
