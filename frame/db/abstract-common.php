@@ -110,11 +110,20 @@ class Entity extends AbstractDB {
 		}
 	}
 
-	public function getall($criterion=null) {
+	public function getall($criterion=null,$fields=null) {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run_criterion("select * from {$this->table}",$criterion);
+			// deliberately being open ended here
+			// this should not use unchecked user input
+			if (is_array($fields)) {
+				$fieldstr = implode(',', $fields);
+			} else if (is_string($fields)) {
+				$fieldstr = $fields;
+			} else {
+				$fieldstr = '*';
+			}
+			$this->run_criterion("select $fieldstr from {$this->table}",$criterion);
 			return $this->resultarray();
 		} catch (Exception $e) {
 			$this->err($e);
