@@ -114,15 +114,7 @@ class Entity extends AbstractDB {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			// deliberately being open ended here
-			// this should not use unchecked user input
-			if (is_array($fields)) {
-				$fieldstr = implode(',', $fields);
-			} else if (is_string($fields)) {
-				$fieldstr = $fields;
-			} else {
-				$fieldstr = '*';
-			}
+			$fieldstr = self::mk_fieldstr($fields);
 			$this->run_criterion("select $fieldstr from {$this->table}",$criterion);
 			return $this->resultarray();
 		} catch (Exception $e) {
@@ -130,6 +122,19 @@ class Entity extends AbstractDB {
 			if (!QUIET) die($this->err());
 			return false;
 		}
+	}
+
+	protected static function mk_fieldstr($fields) {
+		// deliberately being open ended here
+		// this should not use unchecked user input
+		if (is_array($fields)) {
+			$fieldstr = implode(',', $fields);
+		} else if (is_string($fields)) {
+			$fieldstr = $fields;
+		} else {
+			$fieldstr = '*';
+		}
+		return $fieldstr;
 	}
 
 	public function howmany($criterion=null) {
@@ -156,13 +161,14 @@ class Entity extends AbstractDB {
 		}
 	}
 
-	public function getone($id) {
+	public function getone($id,$fields=null) {
 		try {
 			if (empty($this->primary)) 
 				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in upd!");
-			$this->run("select * from {$this->table} where {$this->primary}='%s'", $id);
+			$fieldstr = self::mk_fieldstr($fields);
+			$this->run("select $fieldstr from {$this->table} where {$this->primary}='%s'", $id);
 			$row = $this->getnext();
 			$this->free();
 			return $row;
@@ -232,7 +238,7 @@ class Entity extends AbstractDB {
 		return $pagerdata;
 	}
 
-	public static function getpage($pageid,$model,$offset=0,$limit=10,$criterion=null) {
+	public static function getpage($pageid,$model,$offset=0,$limit=10,$criterion=null,$fields=null) {
 
 		if (!is_object($model)) return "Model is not an object!";
 
@@ -240,7 +246,10 @@ class Entity extends AbstractDB {
 		if (is_array($_SESSION['paged'][$pageid])) {
 			# probably should redo this every time but this saves some resources
 			$howmany = $_SESSION['paged'][$pageid]['howmany'];
-			$criterion = $_SESSION['paged'][$pageid]['criterion'];
+			if (!isset($criterion)) 
+				$criterion = $_SESSION['paged'][$pageid]['criterion'];
+			if (!isset($fields)) 
+				$fields = $_SESSION['paged'][$pageid]['fields'];
 		} else {
 			$howmany = $model->howmany($criterion);
 		}
@@ -248,10 +257,11 @@ class Entity extends AbstractDB {
 		if (!Check::digits($limit)) return "limit is not a number!";
 		if (!Check::digits($offset)) $offset = 0;
 
-		$rows = $model->getall("$criterion limit $limit offset $offset");
+		$rows = $model->getall("$criterion limit $limit offset $offset",$fields);
 
 		$_SESSION['paged'][$pageid] = array(
 			'criterion' => $criterion,
+			'fields' => $fields,
 			'howmany' => $howmany,
 			'limit' => $limit,
 			'offset' => $offset,
@@ -313,10 +323,11 @@ class Relation extends Entity {
 		}
 	}
 
-	public function getone($id) { 
+	public function getone($id,$fields=null) { 
 		try {
 			$args = $this->splitid($id);
-			$args[0] = "select * from {$this->table} where {$args[0]}";
+			$fieldstr = self::mk_fieldstr($fields);
+			$args[0] = "select $fieldstr from {$this->table} where {$args[0]}";
 			call_user_func_array( array($this,'run'), $args );
 			$row = $this->getnext();
 			$this->free();
