@@ -15,7 +15,8 @@ class Note extends Controller {
 			View::assign('error',"Invalid note id!");
 			View::display('home.tpl');
 		}
-		# "Run::me" and "Run::cached" do the "singleton" pattern ie: turn objects back into functions (sort of)
+		# "Run::me" and "Run::cached" do the "singleton" pattern 
+		# ie: turn objects back into functions (sort of)
 		View::assign('note',Run::me('Numbered','getone',$id));
 		View::assign('viewers',
 			Run::me(
