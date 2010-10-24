@@ -4,5 +4,35 @@ define('DBLOGIN','db user name');
 define('DBPW','db password');
 
 # you can override any constant defined in lib/init.php here
-# eg: define('DEFCONTROLLER','newhome'); will redefine the default
+
+# debug output
+# define('QUIET',false);
+
+# salt file for the Login class
+# see example.salt.php for structure
+# if (file_exists('.salt.php')) define('SALTFILE','.salt.php');
+
+#directories
+# where the base models are (ie the ones that are automatically made by scripts)
+# define('MODELSBASE','models/base');
+# where the model subclasses are (hand written)
+# define('MODELSDIR','models');
+# where the controllers are
+# define('CONTROLLERSDIR','controllers');
+# where the view logic is
+# define('VIEWDIR','views');
+# where these libraries are
+# define('LIBDIR','lib');
+# where the base db libraries are
+# define('DBDIR','db');
+
+#components
+# parameter to use to determine controller "action"
+# define('ACTION','action');
+# default page to show if we don't know what visitor wants to do
+# define('DEFCONTROLLER','home');
+# object that manages password retrieval
+# define('LOGINMODEL','User');
+# object that manages login forms
+# define('LOGINCONTROLLER','Loginform');
 

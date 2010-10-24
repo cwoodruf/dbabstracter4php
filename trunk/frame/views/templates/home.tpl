@@ -8,7 +8,8 @@
 
 {foreach from=$notes key=i item=note}
 {assign var=count value=$count+1}
-{$count}
+{$count} ({$note.characters} character{if $note.characters != 1}s{/if})
+
 <blockquote>{$note.notes|@htmlentities}</blockquote>
 <div class="byline">
 

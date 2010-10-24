@@ -1,4 +1,4 @@
-<table cellpadding=5 cellspacing=0 border=0 class="{$class}">
+<table cellpadding="5" cellspacing="0" border="0" class="{$class}">
 
 {foreach from=$data key=field item=value}
 

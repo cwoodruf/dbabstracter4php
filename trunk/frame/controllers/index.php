@@ -23,7 +23,8 @@ class Index extends Controller {
 			(new Numbered),
 			$offset,
 			self::PAGESIZE,
-			'order by created desc'
+			'order by created desc',
+			array('*',"length(notes) as characters")
 		);
 
 		# these are needed by the pagerlinks plugin 

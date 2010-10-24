@@ -20,7 +20,7 @@ function smarty_function_pagerlinks($params,&$smarty) {
 	$last = $howmany - ($howmany % $limit);
 	if ($last == $howmany) $last -= $limit;
 
-	$action = $_REQUEST['action'];
+	$action = $_REQUEST[ACTION];
 	if (is_array($action)) $action = implode('/',$action);
 	$script = $_SERVER['PHP_SELF']."?action=$action&limit=$limit&";
 	if ($params['pagerid']) $script .= "pagerid=".urlencode($params['pagerid']);
