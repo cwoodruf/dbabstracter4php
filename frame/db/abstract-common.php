@@ -36,7 +36,7 @@ class Entity extends AbstractDB {
 	public function findprimary() {
 		# note that for some tables there may not be a primary key
 		if (isset($this->schema['PRIMARY KEY'])) {
-			$this->primary = $schema['PRIMARY KEY'];
+			$this->primary = $this->schema['PRIMARY KEY'];
 			unset($this->schema['PRIMARY KEY']);
 
 		} else if (isset($this->schema[$table.'_id'])) {
@@ -291,6 +291,8 @@ class Relation extends Entity {
 		try {
 			$args = $this->splitid($id);
 			$key = array_shift($args);
+			$set = array();
+			$vals = array();
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;

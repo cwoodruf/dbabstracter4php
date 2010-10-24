@@ -1,4 +1,4 @@
-{include file=xmljunk.tpl}
+{include file=tools/xmljunk.tpl}
 <head>
 <title>{$this->name|default:"example site"}</title>
 {$this->css()}

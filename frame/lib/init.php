@@ -5,7 +5,7 @@ require_once('.settings.php');
 
 # debug output
 if (!defined('QUIET')) {
-	if (file_exists('DEBUG')) {
+	if (file_exists('DEBUG') or $_ENV['DEBUG']) {
 		define('QUIET',false);
 		error_reporting(E_ALL & ~E_NOTICE);
 		ini_set('display_errors',true);
@@ -33,6 +33,8 @@ if (!defined('LIBDIR')) 	define('LIBDIR',dirname(__FILE__));
 if (!defined('DBDIR')) 		define('DBDIR','db');
 
 #components
+# parameter to use to determine controller "action"
+if (!defined('ACTION')) define('ACTION','action');
 # default page to show if we don't know what visitor wants to do
 if (!defined('DEFCONTROLLER')) 	define('DEFCONTROLLER','home');
 # object that manages password retrieval
@@ -53,7 +55,7 @@ require_once(LIBDIR.'/login.php');
 
 function __autoload($class) {
 	# changes typeable file names to camel case class names
-	$class = preg_replace('#(?:^|_)(.)#e',"strtoupper($1)",$class);
+	# $class = preg_replace('#(?:^|_)(.)#e',"strtoupper($1)",$class);
 
 	if (preg_match('#(.*)(?:Relation|Entity)$#',$class,$m)) {
 		$path = MODELSBASE."/".strtolower($m[1]).'_base.php';
