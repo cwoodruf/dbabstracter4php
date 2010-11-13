@@ -2,7 +2,9 @@
 class Logout extends Controller {
 	public function execute () {
 		Login::logout();
-		$context = new Index;
+		// change the below to fit your site 
+		$defcontroller = DEFCONTROLLER;
+		$context = new $defcontroller;
 		$context->execute();
 	}
 }

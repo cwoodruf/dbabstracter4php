@@ -14,7 +14,7 @@ class Login {
 
 	public static function logout() {
 		self::$ldata = null;
-		unset($_SESSION['login']);
+		unset($_SESSION[LOGINSESSION]);
 		unset($_COOKIE['from']);
 		setcookie('from',null,mktime(0,0,0,1,1,1970));
 	}
@@ -26,10 +26,11 @@ class Login {
 
 	private static function authenticate($pwclass) {
 		# if already logged in then 
-		if (is_array($_SESSION['login'])) return $_SESSION['login'];
+		if (isset($_SESSION[LOGINSESSION]) and is_array($_SESSION[LOGINSESSION])) 
+			return $_SESSION[LOGINSESSION];
 
 		$pw = new $pwclass;
-		$login = $_REQUEST['login'];
+		$login = isset($_REQUEST['login']) ? $_REQUEST['login'] : '';
 		if (!$pw->valid_login($login)) return;
 
 		$password = $_REQUEST['password'];
@@ -84,15 +85,25 @@ class Login {
 		return $pw->encode_pw($newpw);
 	}
 	
-	private static function save_login($this_login,$ldata) {
+	public static function save_login($this_login,$ldata) {
 		unset($ldata['password']);
 		self::$ldata = $ldata;
-		$_SESSION['login'] = $ldata;
-		$_SESSION['login']['login'] = $this_login;
-		$_SESSION['login']['time'] = $time = time();
-		return $_SESSION['login'];
+		$_SESSION[LOGINSESSION] = $ldata;
+		$_SESSION[LOGINSESSION]['login'] = $this_login;
+		$_SESSION[LOGINSESSION]['time'] = $time = time();
+		return $_SESSION[LOGINSESSION];
 	}
 
+	public static function refresh() {
+		$ldata = self::check();
+		if (!$ldata) return;
+		$newldata = Run::me(LOGINMODEL,'get_login',$ldata['login']);
+		if ($newldata) {
+			Login::save_login($ldata['login'], $newldata);
+		}
+		return $newldata;
+	}
+	
 	public static function err($error=null,$refresh=false) {
 		if ($refresh) self::$errors = array();
 		if (isset($error)) self::$errors[] = $error;

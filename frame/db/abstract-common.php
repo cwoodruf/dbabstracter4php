@@ -39,7 +39,7 @@ class Entity extends AbstractDB {
 			$this->primary = $this->schema['PRIMARY KEY'];
 			unset($this->schema['PRIMARY KEY']);
 
-		} else if (isset($this->schema[$table.'_id'])) {
+		} else if (isset($table) and isset($this->schema[$table.'_id'])) {
 			$this->primary = $table.'_id';
 
 		} else {
@@ -60,8 +60,11 @@ class Entity extends AbstractDB {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->isauto($fdata)) continue;
 				# if ($field == 'PRIMARY KEY') continue;
+				$this->check($fdata,$data[$field]);
 				if (!isset($data[$field])) continue;
-				$idata[$field] = $this->quote($data[$field],"'");
+				$idata[$field] = $this->quote(
+						$this->modify($fdata,$data[$field]),"'"
+				);
 			}
 			$this->insert($idata);
 			return $this->result;
@@ -82,7 +85,10 @@ class Entity extends AbstractDB {
 			$udata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if (!isset($data[$field])) continue;
-				$udata[] = "$field=".$this->quote($data[$field],"'");
+				$this->check($fdata,$data[$field]);
+				$udata[] = "$field=".$this->quote(
+						$this->modify($fdata,$data[$field]),"'"
+				);
 			}
 			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->primary}='%s'";
 			$this->run($update,$id);
@@ -180,8 +186,54 @@ class Entity extends AbstractDB {
 		}
 	}
 
+	public function modify($fdata,$value) {
+		if (!isset($fdata['modifier'])) return $value;
+		if (is_array($fdata['modifier'])) {
+			$modifiers = $fdata['modifier'];
+			foreach ($modifiers as $class => $method) {
+				if (method_exists($class,$method)) {
+					$value = call_user_func_array(array($class,$method),array($value));
+					return $value;
+				}
+			}
+			throw new Exception("Could not find valid modifier method!");
+		} else {
+			$modifier = $fdata['modifier'];
+			if (function_exists($modifier)) {
+				$value = $modifier($value);
+				return $value;
+			} else {
+				throw new Exception("Could not find modifier: $modifier.");
+			}
+		}
+	}
+
+	# check a value before inserting or updating into the database
+	public function check($fdata,$value) {
+		if (!isset($fdata['checker'])) return;
+		if (is_array($fdata['checker'])) {
+			$checkers = $fdata['checker'];
+			foreach ($checkers as $class => $method) {
+				if (method_exists($class,$method)) {
+					if (call_user_func_array(array($class,$method),array($value))) return;
+					else throw new Exception("Invalid value '$value' found by $class::$method!");
+				}
+			}
+			throw new Exception("Could not find valid checker method!");
+		} else {
+			$checker = $fdata['checker'];
+			if (function_exists($checker)) {
+				if (!$checker($value)) {
+					throw new Exception("Invalid value '$value' found by $checker!");
+				}
+			} else {
+				throw new Exception("Could not find checker: $checker.");
+			}
+		}
+	}
+
 	public function isauto($fdata) {
-		if ($fdata['auto']) return true;
+		if (isset($fdata['auto']) and $fdata['auto']) return true;
 	}
 
 	public function iskey($field,$fdata) {
@@ -229,7 +281,7 @@ class Entity extends AbstractDB {
 			$criterion = $_SESSION['paged'][$pageid]['criterion'];
 			$_SESSION['paged'][$pageid]['howmany'] = $model->howmany($criterion);
 		}
-		return $_SESSION['paged'][$pageid][$field];
+		return isset($field) ? $_SESSION['paged'][$pageid][$field]: null;
 	}
 
 	public static function delpageid($pageid) {
@@ -296,8 +348,9 @@ class Relation extends Entity {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
+				$this->check($fdata,$data[$field]);
 				$set[] = "$field='%s'";
-				$vals[] = $data[$field];
+				$vals[] = $this->modify($fdata,$data[$field]);
 			}
 			$query = "update {$this->table} set ".implode(",", $set)." where $key";
 			$valskeys = array_merge(array($query),$vals,$args);

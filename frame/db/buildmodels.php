@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 print "run both mysql2schema.pl and makeclasses.php to build out classes for a database\n";
-print "usage {$_SERVER['PHP_SELF']} {database name} [table] [model directory: defaults to models/base]\n";
 
 $db = $argv[1];
 if (empty($db)) die("need name of database!\n");
@@ -12,18 +11,22 @@ if (isset($argv[2])) $thistable = $argv[2];
 if (isset($argv[3])) $modeldir = $argv[3];
 if (empty($modeldir)) $modeldir = "models/base";
 
+print "usage {$_SERVER['PHP_SELF']} {database '$db'} [table '$thistable'] [model directory: '$modeldir']\n";
 
 if (!file_exists($modeldir)) mkdir($modeldir,0777,true);
 $schemafile = "$modeldir/$db-schema.php";
 $mysqlfile = "$modeldir/$db.mysql";
 
+print "These user credentials will be saved for db access.\n";
 print "mysql user: ";
 if (($stdin = fopen('php://stdin','r')) !== false) {
 	$myuser = fgets($stdin,255);
 	$myuser = preg_replace('#[\n\r]#','',trim($myuser));
-	print "mysql login ";
+	print "mysql password: ";
+	$mypw = fgets($stdin,255);
+	$mypw = preg_replace('#[\n\r]#','',trim($mypw));
 	shell_exec(
-		"mysqldump -u$myuser -p --opt --no-data $db ".
+		"mysqldump -u'$myuser' -p'$mypw' --opt --no-data $db ".
 		"| /usr/bin/tee $mysqlfile ".
 		"| perl db/mysql2schema.pl > $schemafile"
 	);

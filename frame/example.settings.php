@@ -35,4 +35,9 @@ define('DBPW','db password');
 # define('LOGINMODEL','User');
 # object that manages login forms
 # define('LOGINCONTROLLER','Loginform');
+# key in the $_SESSION array for this login - this should be different for each site
+# define('LOGINSESSION',dirname(__FILE__));
+
+# optional wrapper template for views 
+# define('VIEWWRAPPER','wrapper.tpl');
 

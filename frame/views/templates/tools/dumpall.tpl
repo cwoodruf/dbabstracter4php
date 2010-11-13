@@ -8,6 +8,9 @@
 <tr><td>
 	{include file=$dumptpl}
 </td></tr>
+{foreachelse}
+<tr><td>No records</td></tr>
+
 {/foreach}
 
 </table>

@@ -65,8 +65,14 @@ h1 {
 /* for calendars */
 .calendar-title,.calendar-form {
 	font-family: helvetica,arial,sans-serif;
+}
+.calendar-title {
 	text-align: center;
 }
+.calendar-form {
+	margin-left: 75px;
+}
+
 .calendar-form a {
 	color: black;
 	text-decoration: none;

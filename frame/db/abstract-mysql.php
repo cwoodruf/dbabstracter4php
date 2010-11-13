@@ -93,6 +93,7 @@ abstract class AbstractDB {
 	 */
 	public function resultarray($keep=false) {
 		if (!is_resource($this->result)) return false;
+		$out = null;
 		while ($row = mysql_fetch_assoc($this->result)) {
 			$out[] = $row;
 		}
