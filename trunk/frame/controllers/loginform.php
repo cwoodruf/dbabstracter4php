@@ -2,7 +2,6 @@
 class Loginform extends Controller {
 	public function execute () {
 		$ldata = Login::check();
-
 		# ajaxcheck is the quick check done in the background from the login form
 		if ($this->actions[1] == 'ajaxcheck') {
 			if (is_array($ldata)) {
@@ -13,14 +12,14 @@ class Loginform extends Controller {
 				exit;
 			}
 		}
-
-		if ($this->flag('login')) {
-			$this->delflag('login');
-			Controller::redo();
+		if (is_array($ldata)) {
+			$_REQUEST['action'] = '';
+			require('index.php');
+			return;
 		}
 
 		$this->flag('login',true);
-		View::display('tools/login.tpl');
+		View::wrap('tools/login.tpl');
 	}
 }
 

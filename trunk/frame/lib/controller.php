@@ -13,24 +13,41 @@ class Controller {
 	public function __construct($actions=null) {
 		View::assign('this',$this);
 		$this->controller = strtolower(get_class($this));
-		$this->action = $_REQUEST[ACTION];
+		$this->action = self::r(ACTION);
 		$this->actions = $actions;
 	}
 	
+	public function getaction($i) {
+		return self::v($this->actions,$i);
+	}
+
+	# shut up error reporting for empty request vars etc
+	public static function r($key) {
+		return self::v($_REQUEST,$key);
+	}
+	public static function v($ary,$key) {
+		if (!is_array($ary)) return null;
+		return isset($ary[$key]) ? $ary[$key] : null;
+	}
+
 	# figure out which controller you want to run
 	public static function init() {
+		$actions = array();
 
-		if (is_array($_REQUEST[ACTION])) {
-			$actions = $_REQUEST[ACTION];
-		} else {
-			$actions = explode("/", $_REQUEST[ACTION]);
+		if (is_array(self::r(ACTION))) {
+			$actions = self::r(ACTION);
+		} else if (isset($_REQUEST['action'])) {
+			$actions = explode('/', $_REQUEST[ACTION]);
+		} else if (isset($_SERVER['PATH_INFO'])) {
+			$actionstr = preg_replace('#^/#','',$_SERVER['PATH_INFO']);
+			$actions = explode('/', $actionstr);
 		}
-		$controller = $actions[0];
+		$controller = self::v($actions,0);
 
 		if (!Check::isvar($controller,false)) $controller = DEFCONTROLLER;
 
 		# avoid situations where we repeatedly go back to log in form when we are already logged in
-		if ($_SESSION['login'] and !strcasecmp($controller,LOGINCONTROLLER)) {
+		if (isset($_SESSION['login']) and !strcasecmp($controller,LOGINCONTROLLER)) {
 			$controller = DEFCONTROLLER;
 		}
 
@@ -49,8 +66,13 @@ class Controller {
 
 	# do a method based on an action
 	public function doaction($action) {
-		$callback = $this->doable[$action];
-		if (!method_exists($this,$callback)) return;
+		if (!$action or !$this->doable[$action]) $action = 'default';
+		$callback = self::v($this->doable,$action);
+		if (!$callback) return;
+		if (!method_exists($this,$callback)) {
+			if (!QUIET) die("callback $callback for action $action doesn't exist");
+			return;
+		}
 		return $this->$callback();
 	}
 
@@ -111,6 +133,10 @@ class Controller {
 		return View::$js;
 	}
 	
+	public function sitedir() {
+		return dirname($_SERVER['SCRIPT_NAME']);
+	}
+
 	public function title($title=null) {
 		if (!empty($title)) $this->title = $title;
 		if (!isset($this->title)) return get_class($this);
