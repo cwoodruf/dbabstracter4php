@@ -1,4 +1,4 @@
-{pagerlinks howmany=$howmany offset=$offset limit=$limit options=pages}
+{pagerlinks howmany=$howmany offset=$offset limit=$limit options=pages action=$action}
 
 {* the following will be captured into a smarty variable *}
 {capture name=nav}
