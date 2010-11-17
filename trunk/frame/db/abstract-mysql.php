@@ -34,10 +34,10 @@ abstract class AbstractDB {
 		else $this->db = $d;
 
 		$this->conn = mysql_connect($d['host'],$d['login'],$d['pw']);
-		if (!$this->conn) throw new Exception("can't connect: ".mysql_error($this->conn));
+		if (!$this->conn) throw new Exception("can't connect: ".mysql_error());
 
 		$res = mysql_select_db($d['db'], $this->conn);
-		if (!$res) throw new Exception("can't select database: ".mysql_error($this->conn));
+		if (!$res) throw new Exception("can't select database: ".mysql_error());
 
 		return $this->conn;
 	}
@@ -78,12 +78,13 @@ abstract class AbstractDB {
 	public function run() {
 		$args = func_get_args();
 		$query = array_shift($args);
+
 		if (count($args)) {
 			$query = vsprintf($query,$this->quote($args));
 		} 
 		$this->query = $query;
 		$this->result = mysql_query($this->query,$this->conn());
-		if (!$this->result) throw new Exception("query run error: ".mysql_error($this->conn()));
+		if (!$this->result) throw new Exception("query run error: ".mysql_error());
 		return $this->result;
 	}
 

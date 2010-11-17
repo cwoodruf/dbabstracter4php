@@ -3,6 +3,7 @@
  * tools for showing different types of calendars
  */
 class Calendar {
+	const DEFCAL = 'tools/calendars/month.tpl';
 	public static $calendar;
 	public static $first;
 	public static $firstepoch;
@@ -11,7 +12,12 @@ class Calendar {
 	public static $startdate;
 	public static $startepoch;
 
-	public static function showmonth() {
+	public static function showmonth($template=self::DEFCAL) {
+		View::assign('content',self::fetchmonth($template));
+		View::display('wrapper.tpl');
+	}
+
+	public static function fetchmonth($template=self::DEFCAL) {
 		self::$calendar = 'month';
 		self::setdates();
 		View::assign('weeks', range(0,5));
@@ -21,7 +27,7 @@ class Calendar {
 			$days[++$dow] = $d;
 		}
 		View::assign('days', $days);
-		View::wrap("tools/calendars/".self::$calendar);
+		return View::fetch($template);
 	}
 
 	public static function setdates() {
