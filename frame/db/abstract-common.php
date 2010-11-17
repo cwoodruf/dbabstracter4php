@@ -279,9 +279,19 @@ class Entity extends AbstractDB {
 		if (isset($_SESSION['paged'][$pageid]['model'])) {
 			$model = $_SESSION['paged'][$pageid]['model'];
 			$criterion = $_SESSION['paged'][$pageid]['criterion'];
-			$_SESSION['paged'][$pageid]['howmany'] = $model->howmany($criterion);
+			return $_SESSION['paged'][$pageid]['howmany'] = 
+				self::get_criterion_howmany($model,$criterion);
 		}
-		return isset($field) ? $_SESSION['paged'][$pageid][$field]: null;
+	}
+
+	public static function get_criterion_howmany($model,$criterion) {
+		if (method_exists($model,$criterion)) {
+			$ary = $model->$criterion(null,array("count(*) as n"));
+			$howmany = $ary[0]['n'];
+		} else {
+			$howmany = $model->howmany($criterion);
+		}
+		return $howmany;
 	}
 
 	public static function delpageid($pageid) {
@@ -303,13 +313,17 @@ class Entity extends AbstractDB {
 			if (!isset($fields)) 
 				$fields = $_SESSION['paged'][$pageid]['fields'];
 		} else {
-			$howmany = $model->howmany($criterion);
+			$howmany = self::get_criterion_howmany($model,$criterion);
 		}
 
 		if (!Check::digits($limit)) return "limit is not a number!";
 		if (!Check::digits($offset)) $offset = 0;
 
-		$rows = $model->getall("$criterion limit $limit offset $offset",$fields);
+		if (method_exists($model,$criterion)) {
+			$rows = $model->$criterion("limit $limit offset $offset",$fields);
+		} else {
+			$rows = $model->getall("$criterion limit $limit offset $offset",$fields);
+		}
 
 		$_SESSION['paged'][$pageid] = array(
 			'criterion' => $criterion,

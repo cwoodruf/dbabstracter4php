@@ -6,6 +6,7 @@
 {$this->css()}
 </head>
 <body>
+<a href="index.php">Home</a>
 <h3 class="topmsg">{$topmsg}</h3>
 <h3 class="error">{$error}</h3>
 {$content}

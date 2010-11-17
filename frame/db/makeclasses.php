@@ -95,7 +95,7 @@ $baseattribs
 
 PHP;
 	}
-	$classfile = "$modeldir/{$table}_base.php";
+	$classfile = "$modeldir/".strtolower($table)."_base.php";
 	print "writing $classfile\n";
 	if (($fh = fopen($classfile,'w')) !== false) {
 		fwrite($fh,$classdef);
