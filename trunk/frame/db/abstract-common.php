@@ -60,7 +60,7 @@ class Entity extends AbstractDB {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->isauto($fdata)) continue;
 				# if ($field == 'PRIMARY KEY') continue;
-				$this->check($fdata,$data[$field]);
+				$this->check($fdata,$data[$field],$field);
 				if (!isset($data[$field])) continue;
 				$idata[$field] = $this->quote(
 						$this->modify($fdata,$data[$field]),"'"
@@ -85,7 +85,7 @@ class Entity extends AbstractDB {
 			$udata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if (!isset($data[$field])) continue;
-				$this->check($fdata,$data[$field]);
+				$this->check($fdata,$data[$field],$field);
 				$udata[] = "$field=".$this->quote(
 						$this->modify($fdata,$data[$field]),"'"
 				);
@@ -172,7 +172,7 @@ class Entity extends AbstractDB {
 			if (empty($this->primary)) 
 				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
-				throw new Exception("missing valid table name in upd!");
+				throw new Exception("missing valid table name in getone!");
 			$fieldstr = self::mk_fieldstr($fields);
 			$this->run("select $fieldstr from {$this->table} where {$this->primary}='%s'", $id);
 			$row = $this->getnext();
@@ -209,25 +209,25 @@ class Entity extends AbstractDB {
 	}
 
 	# check a value before inserting or updating into the database
-	public function check($fdata,$value) {
+	public function check($fdata,$value,$field) {
 		if (!isset($fdata['checker'])) return;
 		if (is_array($fdata['checker'])) {
 			$checkers = $fdata['checker'];
 			foreach ($checkers as $class => $method) {
 				if (method_exists($class,$method)) {
 					if (call_user_func_array(array($class,$method),array($value))) return;
-					else throw new Exception("Invalid value '$value' found by $class::$method!");
+					else throw new Exception("Invalid value '$value' for $field!");
 				}
 			}
-			throw new Exception("Could not find valid checker method!");
+			throw new Exception("Could not find valid checker method for $field!");
 		} else {
 			$checker = $fdata['checker'];
 			if (function_exists($checker)) {
 				if (!$checker($value)) {
-					throw new Exception("Invalid value '$value' found by $checker!");
+					throw new Exception("Invalid value '$value' for $field!");
 				}
 			} else {
-				throw new Exception("Could not find checker: $checker.");
+				throw new Exception("Could not find checker: $checker for $field.");
 			}
 		}
 	}
@@ -362,7 +362,7 @@ class Relation extends Entity {
 			foreach ($this->schema as $field => $fdata) {
 				if ($this->iskey($field,$fdata)) continue;
 				if (!isset($data[$field])) continue;
-				$this->check($fdata,$data[$field]);
+				$this->check($fdata,$data[$field],$field);
 				$set[] = "$field='%s'";
 				$vals[] = $this->modify($fdata,$data[$field]);
 			}

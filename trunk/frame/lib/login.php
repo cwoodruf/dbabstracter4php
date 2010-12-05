@@ -94,12 +94,13 @@ class Login {
 		return $_SESSION[LOGINSESSION];
 	}
 
-	public static function refresh() {
+	public static function refresh($login=null) {
 		$ldata = self::check();
 		if (!$ldata) return;
-		$newldata = Run::me(LOGINMODEL,'get_login',$ldata['login']);
+		if (!$login) $login = $ldata['login'];
+		$newldata = Run::me(LOGINMODEL,'get_login',$login);
 		if ($newldata) {
-			Login::save_login($ldata['login'], $newldata);
+			Login::save_login($login, $newldata);
 		}
 		return $newldata;
 	}
