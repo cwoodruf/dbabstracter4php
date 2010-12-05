@@ -106,7 +106,7 @@ class Entity extends AbstractDB {
 			if (empty($this->primary)) 
 				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
-				throw new Exception("missing valid table name in upd!");
+				throw new Exception("missing valid table name in del!");
 			$this->run("delete from {$this->table} where {$this->primary}='%s'", $id);
 			return $this->result;
 		} catch(Exception $e) {
@@ -119,7 +119,7 @@ class Entity extends AbstractDB {
 	public function getall($criterion=null,$fields=null) {
 		try {
 			if (!preg_match('#^\w+$#', $this->table)) 
-				throw new Exception("missing valid table name in upd!");
+				throw new Exception("missing valid table name in getall!");
 			$fieldstr = self::mk_fieldstr($fields);
 			$this->run_criterion("select $fieldstr from {$this->table}",$criterion);
 			return $this->resultarray();

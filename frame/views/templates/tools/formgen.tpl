@@ -10,7 +10,7 @@
 	{assign var=input value=$this->input}
 {/if}
 {schema schema=$schema}
-<form id="formgen" action="index.php" method="post">
+<form id="formgen" action="{$smarty.server.PHP_SELF}" method="post">
 <table cellspacing="0" cellpadding="5" border="0" class="formgen">
 <tr class="formgen formbuttons">
 <td class="formgen formbuttons">
@@ -47,6 +47,12 @@
 {php}continue;{/php}
 {/if}
 
+{if $fdata.static}
+{$value|htmlentities}
+{php}continue;{/php}
+{/if}
+
+
 {if $fdata.plugin}
 {$fdata.plugin field=$field data=$fdata}
 
@@ -59,8 +65,16 @@
 {elseif $fdata.type == 'varchar'}
 <input name="{$field}" size="{$fdata.size}" value="{$value}" /> 
 
+{elseif $fdata.type == 'enum' and is_array($fdata.opts)}
+<select name="{$field}"><option></option>
+{foreach from=$fdata.opts key=i item=option}
+	{if $option == $value}{assign var=selected value=selected}{else}{assign var=selected value=''}{/if}
+<option value="{$option}" {$selected}>{$option}</option>
+{/foreach}
+</select>
+
 {elseif $fdata.type == 'select' and $fdata.options}
-<select name="$field"><option></option>
+<select name="{$field}"><option></option>
 {$fdata.options}
 </select>
 
