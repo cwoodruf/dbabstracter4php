@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+$lib = dirname(dirname(__FILE__));
 print "run both mysql2schema.pl and makeclasses.php to build out classes for a database\n";
 
 $db = $argv[1];
@@ -28,12 +29,12 @@ if (($stdin = fopen('php://stdin','r')) !== false) {
 	shell_exec(
 		"mysqldump -u'$myuser' -p'$mypw' --opt --no-data $db ".
 		"| /usr/bin/tee $mysqlfile ".
-		"| perl db/mysql2schema.pl > $schemafile"
+		"| perl $lib/db/mysql2schema.pl > $schemafile"
 	);
 	print "wrote table info to $schemafile\n";
 	# by default makeclasses.php won't overwrite an existing directory
 	$force = true;
-	require("db/makeclasses.php");
+	require("$lib/db/makeclasses.php");
 } else {
 	die("can't get standard input");
 }
