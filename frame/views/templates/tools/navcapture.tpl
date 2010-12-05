@@ -24,7 +24,7 @@
 {/foreach}
 &nbsp;
 
-{if $offset <= $howmany - $limit}
+{if $offset < $howmany - $limit}
 <a href="{$pagerlinks.next}">next &gt;</a> &nbsp;&nbsp;
 <a href="{$pagerlinks.last}">last &gt;&gt;</a> 
 {else}

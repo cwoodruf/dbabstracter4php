@@ -144,5 +144,11 @@ abstract class AbstractDB {
 		}
 		return $quote.mysql_real_escape_string($str,$this->conn()).$quote;
 	}
+	/**
+	 * just get the last error
+	 */
+	public function dberr() {
+		return mysql_error();
+	}
 }
 

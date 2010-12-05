@@ -24,6 +24,11 @@ class Check {
 		return $emptyok;
 	}
 
+	public static function notempty($s) {
+		if (empty($s)) return false;
+		return true;
+	}
+
 	public static function isvar($s,$emptyok=null) {
 		if (self::emptyok($emptyok)) return preg_match('#^\w*$#', $s);
 		return preg_match('#^\w+$#', $s);
@@ -32,6 +37,13 @@ class Check {
 		if (self::emptyok($emptyok) and empty($s)) return true;
 		$s = trim($s);
 		return preg_match('#^\w[\w\.\-]*@\w[\w\.\-]*\.\w+$#', $s);
+	}
+	public static function isphone($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
+		$s = trim($s);
+		$num = preg_replace('#\D#','', $s);
+		if (strlen($num) < 10) return false;
+		return true;
 	}
 	public static function isdate($s,$emptyok=null) {
 		if (self::emptyok($emptyok) and empty($s)) return true;
