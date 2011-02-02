@@ -37,7 +37,7 @@
 {assign var=value value=$input[$field]}
 
 {if $fdata.auto}
- {if $value}
+ {if isset($value)}
   {$value}
   <input type="hidden" name="{$field}" value="{$value}">
  {else}
