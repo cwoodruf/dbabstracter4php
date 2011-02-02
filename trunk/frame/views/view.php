@@ -30,6 +30,11 @@ class View {
 		return self::$smarty->assign($name,$value);
 	}
 
+	public static function set($name,$value) {
+		return self::$smarty->assign($name,$value);
+	}
+
+
 	public static function wrap($tpl,$wrapper=VIEWWRAPPER) {
 		if (self::$smarty->template_exists($wrapper)) {
 			self::assign('content',self::fetch($tpl));
