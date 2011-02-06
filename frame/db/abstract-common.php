@@ -85,6 +85,7 @@ class Entity extends AbstractDB {
 			$udata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if (!isset($data[$field])) continue;
+				if ($fdata['key']) continue;
 				$this->check($fdata,$data[$field],$field);
 				$udata[] = "$field=".$this->quote(
 						$this->modify($fdata,$data[$field]),"'"
