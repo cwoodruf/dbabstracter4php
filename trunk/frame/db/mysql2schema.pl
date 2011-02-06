@@ -29,12 +29,13 @@ while (<>) {
 			}
 			push @fields, $field;
 
-		} elsif (/^\s*PRIMARY KEY\s+\(([^\)]*)\)/) {
+		} elsif (/^\s*PRIMARY KEY\s+\((.*)\)/) {
 			my $keys = $1;
 			$keys =~ s/`//g;
 			@keys = split ',', $keys;
 			if (scalar(@keys) == 1) {
 				foreach my $field (keys %schema) {
+					$keys =~ s/\(\d+\)$//;
 					if ($field =~ m/^($keys)$/) {
 						$schema{$field}{key} = 'true';
 					}
