@@ -1,0 +1,7 @@
+; virtual madam setup
+exten => _NXXNXXXXXX,1,Set(msgdir=/dir/to//intouch-msgs)
+exten => _NXXNXXXXXX,n,Set(dbport=)
+exten => _NXXNXXXXXX,n,Set(dbuser=)
+exten => _NXXNXXXXXX,n,Set(dbpass=)
+exten => _NXXNXXXXXX,n,Goto(intouch,s,1)
+
