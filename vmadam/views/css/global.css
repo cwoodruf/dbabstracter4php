@@ -1,0 +1,18 @@
+body {
+	font-family: arial, verdana, sans-serif;
+	font-size: 11pt;
+}
+.error {
+	color: red;
+	font-weight: bold;
+}
+.results {
+	color: black;
+	font-weight: bold;
+}
+div.phonesubtitle {
+	font-style: italic;
+	font-size: small;
+	margin-top: -20px;
+	margin-bottom: 8px;
+}

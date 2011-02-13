@@ -1,0 +1,13 @@
+div.profile {
+	background-color: #EEEEEE;
+	border: 1px black solid;
+	margin-bottom: 15px;
+	width: 785px;
+	padding: 10px;
+}
+div.profile.message, div.profile.phone {
+	padding: 0;
+	padding-bottom: 10px;
+	width: 700;
+	border: none;
+}

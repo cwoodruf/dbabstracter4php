@@ -1,0 +1,17 @@
+div.menu {
+	padding-top: 15px;
+	padding-left: 5px;
+	margin-bottom: 10px;
+	border: 1px black solid;
+	width: 800px;
+}
+
+.instr {
+	font-size: small;
+	font-style: italic;
+}
+
+div.menuitem {
+	float: left;
+	margin-right: 30px;
+}
