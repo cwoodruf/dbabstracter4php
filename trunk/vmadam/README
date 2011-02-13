@@ -1,0 +1,38 @@
+This demonstration project is a system for providing 
+automated messaging and callback services for vulnerable 
+outdoor workers.
+
+How it works:
+
+Workers can call in and leave messages. Messages are sorted by
+phone number based on caller id. Phone numbers are associated 
+with individual workers via the web interface.
+
+Optionally the system can be set to make a call back to the
+worker after they leave a message. How long the system waits
+is a parameter that can be set via the website for that 
+individual worker.
+
+The system tracks when people call in and will alert admins 
+to people who are live on the system and have not called in in
+a predetermined period of time.
+
+Requirements:
+
+This system has been tested with asterisk 1.4 and should work
+with asterisk 1.6. The RecordKeys application is a custom app
+that exists in this build of asterisk:
+
+https://lifelinevm.googlecode.com/svn/trunk/telephony
+
+Its probably reasonable to not use RecordKeys as mostly people
+would leave messages. 
+
+Todo list:
+
+Prompts need to be recorded for the telephony interface.
+Improved web interface. 
+Make system work with more than one group sharing the database.
+Integrate location services with contact calls.
+Probably much more.
+
