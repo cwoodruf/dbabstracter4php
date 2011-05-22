@@ -29,7 +29,7 @@
 {include file=tools/hiddenfields.tpl}
 {if $action}
 <input type="submit" name="{$actvar}" value="{$action}" />
-{elseif $this->action}
+{elseif $this->newaction}
 <input type="submit" name="{$actvar}" value="{$this->action}" />
 {else}
 <input type="submit" name="{$actvar}" value="save" />
