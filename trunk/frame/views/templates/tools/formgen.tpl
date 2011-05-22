@@ -19,15 +19,27 @@
 <td class="formgen formbuttons" align="right">
 
 {* you can use an array instead of action=controller/modifier form *}
-<input type="hidden" name="action[]" value="{$this->controller}" />
+{if $this->controller}
+{assign var=actvar value="action[]"}
+<input type="hidden" name="{$actvar}" value="{$this->controller}" />
+{else}
+{assign var=actvar value="action"}
+{/if}
 
 {include file=tools/hiddenfields.tpl}
-<input type="submit" name="action[]" value="save" />
+{if $action}
+<input type="submit" name="{$actvar}" value="{$action}" />
+{elseif $this->action}
+<input type="submit" name="{$actvar}" value="{$this->action}" />
+{else}
+<input type="submit" name="{$actvar}" value="save" />
+{/if}
 
 </td>
 </tr>
 
 {foreach from=$schema key=field item=fdata}
+{assign var=checked value=""}
 
 {if $fdata.hide}{php}continue;{/php}{/if}
 
@@ -36,10 +48,18 @@
 <td class="formgen">
 {assign var=value value=$input[$field]}
 
+{if $prefix}
+{assign var=fieldname value="$prefix[$field]"}
+{elseif $this->prefix}
+{assign var=fieldname value="`$this->prefix`[$field]"}
+{else}
+{assign var=fieldname value=$field}
+{/if}
+
 {if $fdata.auto}
  {if isset($value)}
   {$value}
-  <input type="hidden" name="{$field}" value="{$value}">
+  <input type="hidden" name="{$fieldname}" value="{$value}">
  {else}
   <i>{$fdata.alt}</i>
  {/if}
@@ -60,32 +80,44 @@
 {include file=$fdata.template field=$field data=$fdata}
 
 {elseif $fdata.type == 'text'}
-<textarea name="{$field}" rows="{$fdata.rows}" cols="{$fdata.cols}">{$value}</textarea>
+<textarea name="{$fieldname}" rows="{$fdata.rows}" cols="{$fdata.cols}">{$value}</textarea>
 
 {elseif $fdata.type == 'varchar'}
-<input name="{$field}" size="{$fdata.size}" value="{$value}" /> 
+<input name="{$fieldname}" size="{$fdata.size}" value="{$value}" /> 
 
 {elseif $fdata.type == 'enum' and is_array($fdata.opts)}
-<select name="{$field}"><option></option>
+<select name="{$fieldname}"><option></option>
 {foreach from=$fdata.opts key=i item=option}
 	{if $option == $value}{assign var=selected value=selected}{else}{assign var=selected value=''}{/if}
 <option value="{$option}" {$selected}>{$option}</option>
 {/foreach}
 </select>
 
+{elseif $fdata.type == 'radio' and is_array($fdata.opts)}
+{foreach from=$fdata.opts key=i item=option}
+	{if $option == $value}{assign var=selected value=checked}{else}{assign var=selected value=''}{/if}
+<span class="formgen radio">
+<input type="radio" name="{$fieldname}" value="{$option}" {$selected} /> {$option} 
+</span>
+{/foreach}
+
+{elseif $fdata.type == 'checkbox' or $fdata.type == 'boolean'}
+	{if $value}{assign var=checked value=checked}{else}{assign var=value value=1}{/if} 
+<input type="checkbox" name="{$fieldname}" {$checked} value="{$value}" />
+
 {elseif $fdata.type == 'select' and $fdata.options}
-<select name="{$field}"><option></option>
+<select name="{$fieldname}"><option></option>
 {$fdata.options}
 </select>
 
 {elseif $fdata.type == 'password'}
-<input type="password" name="{$field}" size="{$fdata.size}" value="{$value}" /> 
+<input type="password" name="{$fieldname}" size="{$fdata.size}" value="{$value}" /> 
 
 {elseif $fdata.type == 'hidden'}
-<input type="hidden" name="{$field}" value="{$value}" />
+<input type="hidden" name="{$fieldname}" value="{$value}" />
 
 {else}
-<input name="{$field}" value="{$value}" /> 
+<input name="{$fieldname}" value="{$value}" /> 
 	
 {/if}
 
