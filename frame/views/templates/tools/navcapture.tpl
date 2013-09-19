@@ -1,8 +1,8 @@
 {pagerlinks howmany=$howmany offset=$offset limit=$limit options=pages action=$action}
-
 {* the following will be captured into a smarty variable *}
 {capture name=nav}
 <div class="notenav">
+{if $howmany > $limit}
 {if $offset > 0}
 <a href="{$pagerlinks.first}">&lt;&lt; start</a> &nbsp;&nbsp;
 <a href="{$pagerlinks.prev}">&lt; prev</a> 
@@ -30,6 +30,7 @@
 {else}
 next &gt; &nbsp;&nbsp;
 last &gt;&gt; 
+{/if}
 {/if}
 </div>
 {/capture}
