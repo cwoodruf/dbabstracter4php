@@ -36,7 +36,7 @@ class Run {
 	 * either run something or return a cached set of results
 	 * uses sha1 to make the signature
 	 */
-	public static function cached($class,$func,$args) {
+	public static function cached($class,$func,$args=null) {
 		$sig = $class.'.'.$func.'.'.sha1(serialize($args));
 
 		if (!self::$refresh and isset(self::$results[$sig])) {

@@ -41,6 +41,7 @@ class Calendar {
 		View::assign('nextdate',self::$nextdate);
 		View::assign('startday',date('j',self::$startepoch));
 		View::assign('startdate',self::$startdate);
+		View::assign('firstdate',self::$first);
 		View::assign('eom', ($eom = date('t',self::$startepoch)));
 		View::assign('enddate', preg_replace('#-\d+$#',"-$eom",self::$startdate));
 		View::assign('firstdow', date('N',self::$firstepoch));

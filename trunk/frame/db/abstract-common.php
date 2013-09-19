@@ -54,6 +54,8 @@ class Entity extends AbstractDB {
 
 	public function ins($data) {
 		try {
+			if (!is_array($data)) 
+				throw new Exception("ins: no data!");
 			if (!preg_match('#^\w+$#', $this->table)) 
 				throw new Exception("missing valid table name in ins!");
 			$idata = array();
@@ -62,10 +64,9 @@ class Entity extends AbstractDB {
 				# if ($field == 'PRIMARY KEY') continue;
 				$this->check($fdata,$data[$field],$field);
 				if (!isset($data[$field])) continue;
-				$idata[$field] = $this->quote(
-						$this->modify($fdata,$data[$field]),"'"
-				);
+				$idata[$field] = $this->modify($fdata,$this->quote($data[$field],"'"));
 			}
+			if (count($idata) == 0) return false;
 			$this->insert($idata);
 			return $this->result;
 
@@ -78,6 +79,8 @@ class Entity extends AbstractDB {
 
 	public function upd($id,$data) {
 		try {
+			if (!is_array($data)) 
+				throw new Exception("upd: no data!");
 			if (empty($this->primary)) 
 				throw new Exception("no primary key defined!");
 			if (!preg_match('#^\w+$#', $this->table)) 
@@ -85,12 +88,11 @@ class Entity extends AbstractDB {
 			$udata = array();
 			foreach ($this->schema as $field => $fdata) {
 				if (!isset($data[$field])) continue;
-				if ($fdata['key']) continue;
+				# if ($fdata['key']) continue;
 				$this->check($fdata,$data[$field],$field);
-				$udata[] = "$field=".$this->quote(
-						$this->modify($fdata,$data[$field]),"'"
-				);
+				$udata[] = "$field=".$this->modify($fdata,$this->quote($data[$field],"'"));
 			}
+			if (count($udata) == 0) return false;
 			$update = "update {$this->table} set ".implode(",", $udata)." where {$this->primary}='%s'";
 			$this->run($update,$id);
 			return $this->result;
@@ -265,22 +267,22 @@ class Entity extends AbstractDB {
 	# ie won't work with other types of models - this is bad as we'd like a general way to do this
 	# alternatively check what model is and then do something appropriate
 	public static function getpageid($pageid,$field=null) {
-		if ($field and isset($_SESSION['paged'][$pageid][$field])) 
-			return $_SESSION['paged'][$pageid][$field];
-		return $_SESSION['paged'][$pageid];
+		if ($field and isset($_SESSION[LOGINSESSION]['paged'][$pageid][$field])) 
+			return $_SESSION[LOGINSESSION]['paged'][$pageid][$field];
+		return $_SESSION[LOGINSESSION]['paged'][$pageid];
 	}
 
 	public static function setpageid($pageid,$field,$value) {
-		if ($field and isset($_SESSION['paged'][$pageid][$field])) 
-			$_SESSION['paged'][$pageid][$field] = $value;
-		return $_SESSION['paged'][$pageid][$field];
+		if ($field and isset($_SESSION[LOGINSESSION]['paged'][$pageid][$field])) 
+			$_SESSION[LOGINSESSION]['paged'][$pageid][$field] = $value;
+		return $_SESSION[LOGINSESSION]['paged'][$pageid][$field];
 	}
 
 	public static function setpageidhowmany($pageid) {
-		if (isset($_SESSION['paged'][$pageid]['model'])) {
-			$model = $_SESSION['paged'][$pageid]['model'];
-			$criterion = $_SESSION['paged'][$pageid]['criterion'];
-			return $_SESSION['paged'][$pageid]['howmany'] = 
+		if (isset($_SESSION[LOGINSESSION]['paged'][$pageid]['model'])) {
+			$model = $_SESSION[LOGINSESSION]['paged'][$pageid]['model'];
+			$criterion = $_SESSION[LOGINSESSION]['paged'][$pageid]['criterion'];
+			return $_SESSION[LOGINSESSION]['paged'][$pageid]['howmany'] = 
 				self::get_criterion_howmany($model,$criterion);
 		}
 	}
@@ -296,23 +298,23 @@ class Entity extends AbstractDB {
 	}
 
 	public static function delpageid($pageid) {
-		$pagerdata = $_SESSION['paged'][$pageid];
-		unset($_SESSION['paged'][$pageid]);
+		$pagerdata = $_SESSION[LOGINSESSION]['paged'][$pageid];
+		unset($_SESSION[LOGINSESSION]['paged'][$pageid]);
 		return $pagerdata;
 	}
 
-	public static function getpage($pageid,$model,$offset=0,$limit=10,$criterion=null,$fields=null) {
-
+	public static function getpage($pageid,$model,$offset=0,$limit=10,$criterion=null,$fields=null,$refresh=true) {
 		if (!is_object($model)) return "Model is not an object!";
 
 		if (!$pageid) return "Bad page id!";
-		if (is_array($_SESSION['paged'][$pageid])) {
+
+		if (!$refresh and is_array($_SESSION[LOGINSESSION]['paged'][$pageid])) {
 			# probably should redo this every time but this saves some resources
-			$howmany = $_SESSION['paged'][$pageid]['howmany'];
+			$howmany = $_SESSION[LOGINSESSION]['paged'][$pageid]['howmany'];
 			if (!isset($criterion)) 
-				$criterion = $_SESSION['paged'][$pageid]['criterion'];
+				$criterion = $_SESSION[LOGINSESSION]['paged'][$pageid]['criterion'];
 			if (!isset($fields)) 
-				$fields = $_SESSION['paged'][$pageid]['fields'];
+				$fields = $_SESSION[LOGINSESSION]['paged'][$pageid]['fields'];
 		} else {
 			$howmany = self::get_criterion_howmany($model,$criterion);
 		}
@@ -326,7 +328,7 @@ class Entity extends AbstractDB {
 			$rows = $model->getall("$criterion limit $limit offset $offset",$fields);
 		}
 
-		$_SESSION['paged'][$pageid] = array(
+		$_SESSION[LOGINSESSION]['paged'][$pageid] = array(
 			'criterion' => $criterion,
 			'fields' => $fields,
 			'howmany' => $howmany,
@@ -335,6 +337,11 @@ class Entity extends AbstractDB {
 			'model' => $model,
 		);
 		return array('limit' => $limit, 'howmany' => $howmany, 'offset' => $offset, 'rows' => $rows);
+	}
+	public function lastid()
+	{
+		// this is db specific
+		return $this->getid();
 	}
 
 }
@@ -365,7 +372,7 @@ class Relation extends Entity {
 				if (!isset($data[$field])) continue;
 				$this->check($fdata,$data[$field],$field);
 				$set[] = "$field='%s'";
-				$vals[] = $this->modify($fdata,$data[$field]);
+				$vals[] = $this->modify($fdata,$this->quote($data[$field],"'"));
 			}
 			$query = "update {$this->table} set ".implode(",", $set)." where $key";
 			$valskeys = array_merge(array($query),$vals,$args);
@@ -424,7 +431,7 @@ class Relation extends Entity {
 			throw new Exception("splitid: primary key is not array");
 
 		foreach ($this->primary as $field => $table) {
-			if (empty($id[$field])) 
+			if (!isset($id[$field])) 
 				throw new Exception("splitid: missing $field in id");
 			$fields[] = $field."='%s'";
 			$ids[] = $id[$field];

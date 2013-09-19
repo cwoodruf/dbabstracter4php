@@ -8,6 +8,15 @@ http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
 */
 
 /**
+ * needed for search filter below
+ */
+function mklcase($item)
+{
+	if (preg_match('#^pwhash#', $item)) return "''";
+	return "'\"',lcase($item),'\"'";
+}
+
+/**
  * base class for working with mysql 
  * this should be the only place where mysql specific code shows up
  * needs an array $tables with schema information - 
@@ -21,6 +30,7 @@ abstract class AbstractDB {
 	public $query;
 	public $result;
 	public $lastid;
+	public $instype = 'replace into';
 
 	public function __construct($dbdata) {
 		$this->connect($dbdata);
@@ -67,7 +77,7 @@ abstract class AbstractDB {
 	 * as insert ignore is mysql specific its defined here
 	 */
 	public function insert($idata) {
-		$insert = "insert ignore into {$this->table} (".implode(",",array_keys($idata)).") ".
+		$insert = "{$this->instype} {$this->table} (".implode(",",array_keys($idata)).") ".
 				"values (".implode(",",array_values($idata)).")";
 		$this->run($insert);
 	}
@@ -96,7 +106,7 @@ abstract class AbstractDB {
 		if (!is_resource($this->result)) return false;
 		$out = null;
 		while ($row = mysql_fetch_assoc($this->result)) {
-			$out[] = $row;
+			$out[] = array_map('stripslashes',$row);
 		}
 		if (!$keep) $this->free();
 		return $out;
@@ -122,7 +132,9 @@ abstract class AbstractDB {
 	 */
 	public function getnext() {
 		if (!is_resource($this->result)) return false;
-		return mysql_fetch_assoc($this->result);
+		$row = mysql_fetch_assoc($this->result);
+		if (is_array($row)) return array_map('stripslashes', $row);
+		return $row;
 	}
 	/**
          * clear a query result
@@ -150,5 +162,44 @@ abstract class AbstractDB {
 	public function dberr() {
 		return mysql_error();
 	}
+	/**
+	 * generic mysql specific search filter that works on smaller tables
+	 * any fields included in the search filter must not allow nulls
+	 */
+	public function searchfilter($search,$exclude=null) {
+		$schema = array_keys($this->schema);
+		if (is_array($this->search)) $schema = array_merge($schema, $this->search);
+		if (is_array($this->nosearch)) $schema = array_diff($schema, $this->nosearch);
+		$fields = array_map('mklcase',$schema);
+		$fieldstr = implode(',', $fields);
+		$concat = "concat($fieldstr)";
+		$this->_concat_terms($filter,$concat,$search,'like');
+		if (isset($exclude)) $this->_concat_terms($filter,$concat,$exclude,'not like');
+		return $filter;
+	}
+
+	private function _concat_terms(&$filter,$concat,$terms,$op) 
+	{
+		if (!preg_match('#^where #i',$filter)) $filter = "where 1 ";
+		if (is_array($terms)) {
+			foreach ($terms as $field => $terms) {
+				$terms = $this->quote(strtolower(trim($terms)));
+				if (preg_match('#^\d+#',$field)) {
+					foreach (explode(" ",$terms) as $term) {
+						$filter .= " and $concat $op '%$term%' ";
+					}
+				} else {
+					$filter .= " and $field $op '$terms' ";
+				}
+			}
+			return $filter;
+		}
+		$terms = $this->quote(strtolower(trim($terms)));
+		foreach (explode(" ",$terms) as $term) {
+			$filter .= " and $concat $op '%$term%' ";
+		}
+		return $filter;
+	}
+
 }
 

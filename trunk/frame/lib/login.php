@@ -9,6 +9,7 @@ session_start();
  */
 class Login {
 
+	public static $pwhashvalid = 30;
 	private static $ldata;
 	private static $errors;
 
@@ -48,6 +49,32 @@ class Login {
 		return;
 	}
 
+	# see the smarty plugins function.*.php with the same name for perm(s) and allowed
+	# permissions are set via templates using the perm and setadmin plugins
+	public static function perm($action,$perms) {
+		if (!isset($_SESSION[LOGINSESSION])) return;
+		$permlist = explode('|',$perms);
+		foreach ($permlist as $perm) {
+			$_SESSION[LOGINSESSION]['perms'][$action][$perm] = true;
+		} 
+	}
+
+	public static function perms() {
+		return $_SESSION[LOGINSESSION]['perms'];
+	}
+
+	public static function setadmin($isadmin=true) {
+		if (!isset($_SESSION[LOGINSESSION])) return;
+		$_SESSION[LOGINSESSION]['isadmin'] = $isadmin;
+	}
+
+	public static function allowed($action,$perm) {
+		if ($_SESSION[LOGINSESSION]['isadmin']) return true;
+		if (is_array($action)) $action = implode('/', $action);
+		if ($_SESSION[LOGINSESSION]['perms'][$action][$perm]) return true;
+		return false;
+	}
+		
 	public static function encode($pw) {
 		require(SALTFILE);
 		return sha1($pw.SALT);
@@ -109,5 +136,16 @@ class Login {
 		if ($refresh) self::$errors = array();
 		if (isset($error)) self::$errors[] = $error;
 		return self::$errors;
+	}
+
+	public function pwhashdata() 
+	{
+		$pwhash = self::pwhash();
+		return array('pwhash' => $pwhash, 'pwhashvalid' => (time() + self::$pwhashvalid * 86400));
+	}
+
+	public function pwhash()
+	{
+		return sha1(rand().time().SALT);
 	}
 }
