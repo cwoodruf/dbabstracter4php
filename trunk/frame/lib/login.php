@@ -40,7 +40,6 @@ class Login {
 		$password = $pw->encode_pw($password);
 
 		$ldata = $pw->get_login($login);
-print "{$ldata[PWDBFIELD]} vs $password<br>\n";
 		$loginok = ($ldata[PWDBFIELD] === $password) ? true : false;
 
 		if ($loginok) {
