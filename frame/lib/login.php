@@ -12,6 +12,8 @@ class Login {
 	public static $pwhashvalid = 30;
 	private static $ldata;
 	private static $errors;
+	private static $pwclass;
+	private static $pw;
 
 	public static function logout() {
 		self::$ldata = null;
@@ -21,16 +23,24 @@ class Login {
 	}
 
 	public static function check() {
-		$pwclass = LOGINMODEL;
-		return self::authenticate($pwclass);
+		return self::authenticate();
 	}
 
-	private static function authenticate($pwclass) {
-		# if already logged in then 
-		if (isset($_SESSION[LOGINSESSION]) and is_array($_SESSION[LOGINSESSION])) 
-			return $_SESSION[LOGINSESSION];
+	private static function pwinstance() {
+		self::$pwclass = LOGINMODEL;
+		if (!is_object(self::$pw)) {
+			self::$pw = new self::$pwclass;
+		}
+		return self::$pw;
+	}
 
-		$pw = new $pwclass;
+	private static function authenticate() {
+		# if already logged in then 
+		if (is_array($_SESSION[LOGINSESSION]['ldata'])) 
+			return $_SESSION[LOGINSESSION]['ldata'];
+
+		$pw = self::pwinstance();
+
 		$login = isset($_REQUEST[LOGINFIELD]) ? $_REQUEST[LOGINFIELD] : '';
 		if (!$pw->valid_login($login)) return;
 
@@ -75,23 +85,26 @@ class Login {
 		return false;
 	}
 		
-	public static function encode($pw) {
-		require_once(SALTFILE);
-		return sha1($pw.SALT);
+	public static function encode($password) {
+		$pw = self::pwinstance();
+		$encoded = $pw->encode_pw($password);
+print $encoded."<br>\n";
+die("dead");
+		return $encoded;
 	}
 
 	/**
 	 * convenience method for checking the password data in 
 	 * tools/passwordform.tpl
 	 */
-	public static function getpw($pwclass=LOGINMODEL) {
+	public static function getpw() {
 		self::err(null,true);
-		$ldata = Login::authenticate($pwclass);
+		$ldata = Login::authenticate();
 		if (!is_array($ldata)) {
 			self::err("you are not logged in!");
 			return false;
 		}
-		$pw = new $pwclass;
+		$pw = self::pwinstance();
 		$me = $pw->getone($ldata['login']);
 		if ($me['password'] != $pw->encode_pw($_REQUEST['old_password'])) {
 			self::err("old password was wrong!");
@@ -115,7 +128,7 @@ class Login {
 	public static function save_login($this_login,$ldata) {
 		unset($ldata['password']);
 		self::$ldata = $ldata;
-		$_SESSION[LOGINSESSION] = $ldata;
+		$_SESSION[LOGINSESSION]['ldata'] = $ldata;
 		$_SESSION[LOGINSESSION]['login'] = $this_login;
 		$_SESSION[LOGINSESSION]['time'] = $time = time();
 		return $_SESSION[LOGINSESSION];
