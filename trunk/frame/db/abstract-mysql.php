@@ -105,7 +105,12 @@ abstract class AbstractDB {
 	public function resultarray($keep=false) {
 		if (!is_resource($this->result)) return false;
 		$out = null;
-		while ($row = mysql_fetch_assoc($this->result)) {
+		if ($this->resultformat == 'array') {
+			$fetch = 'mysql_fetch_array';
+		} else {
+			$fetch = 'mysql_fetch_assoc';
+		}
+		while ($row = $fetch($this->result)) {
 			$out[] = array_map('stripslashes',$row);
 		}
 		if (!$keep) $this->free();

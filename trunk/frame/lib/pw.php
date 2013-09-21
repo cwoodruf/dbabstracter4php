@@ -4,4 +4,5 @@ interface PW {
 	public function valid_pw($pw);
 	public function encode_pw($pw);
 	public function get_login($id);
+	public function check_signature();
 }

@@ -88,8 +88,6 @@ class Login {
 	public static function encode($password) {
 		$pw = self::pwinstance();
 		$encoded = $pw->encode_pw($password);
-print $encoded."<br>\n";
-die("dead");
 		return $encoded;
 	}
 
@@ -126,7 +124,7 @@ die("dead");
 	}
 	
 	public static function save_login($this_login,$ldata) {
-		unset($ldata['password']);
+		unset($ldata[PWDBFIELD]);
 		self::$ldata = $ldata;
 		$_SESSION[LOGINSESSION]['ldata'] = $ldata;
 		$_SESSION[LOGINSESSION]['login'] = $this_login;
@@ -160,5 +158,12 @@ die("dead");
 	public function pwhash()
 	{
 		return sha1(rand().time().SALT);
+	}
+
+	# signature checking interface
+	public static function checksig($fields,$sig)
+	{
+		$pw = self::pwinstance();
+		return $pw->check_signature($fields,$sig);
 	}
 }
