@@ -11,8 +11,8 @@ function encode_pw($password,$login='')
 	return sha1($password.SALT);
 }
 
-# make a signature with a nonce
-function encode_signature($password,$login,$nonce)
+# make a hash with a nonce
+function encode_nonce($encoded,$nonce)
 {
-	return sha1($login.SALT.$password.$nonce);
+	return sha1($encoded.$nonce.SALT);
 }

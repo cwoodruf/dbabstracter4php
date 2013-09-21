@@ -46,11 +46,14 @@ if (($stdin = fopen('php://stdin','r')) !== false) {
 		$dbhost = fgets($stdin,255);
 		$dbhost = preg_replace('#[\n\r]#','',trim($dbhost));
 	}
+	/* # older approach that does not capture views
 	shell_exec(
 		"mysqldump -u'$myuser' -p'$mypw' -h'$dbhost' --opt --no-data $db ".
 		"| /usr/bin/tee $mysqlfile ".
 		"| perl $lib/db/mysql2schema.pl > $schemafile"
 	);
+	*/
+	require_once('mysql2schema.php');
 	print "wrote table info to $schemafile\n";
 	# by default makeclasses.php won't overwrite an existing directory
 	$force = true;

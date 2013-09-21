@@ -20,7 +20,7 @@ class Entity extends AbstractDB {
 	public $dbhost;
 	public $primary;
 		
-	public function __construct($db,$schema,$tb) {
+	public function __construct($db,$schema=null,$tb=null) {
 		parent::__construct($db);
 
 		$this->dbname = $db['db'];
@@ -353,7 +353,7 @@ class Entity extends AbstractDB {
  */
 class Relation extends Entity {
 
-	public function __construct($db,$schema,$table) {
+	public function __construct($db,$schema=null,$table=null) {
 		parent::__construct($db,$schema,$table);
 	}
 
