@@ -2,7 +2,8 @@
 {literal}
 <form id="form_login" action="index.php" method="get"
       onsubmit="
-var url='/ra/index.php?action=loginform/ajaxcheck&login='+login.value+'password='+password.value;
+var url='/ra/index.php?action=loginform/ajaxcheck&login='+
+	login.value+'&password='+password.value;
 $.get(
 	url,
 	function (data) {
