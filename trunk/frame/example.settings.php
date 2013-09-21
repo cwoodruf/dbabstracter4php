@@ -33,6 +33,9 @@ define('DBPW','db password');
 # define('DEFCONTROLLER','home');
 # object that manages password retrieval
 # define('LOGINMODEL','User');
+# define('LOGINFIELD','login');
+# define('PWFIELD','password');
+# define('PWDBFIELD','password');
 # object that manages login forms
 # define('LOGINCONTROLLER','Loginform');
 # key in the $_SESSION array for this login - this should be different for each site

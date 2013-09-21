@@ -2,16 +2,12 @@
 {literal}
 <form id="form_login" action="index.php" method="get"
       onsubmit="
+var url='/ra/index.php?action=loginform/ajaxcheck&login='+login.value+'password='+password.value;
 $.get(
-	'index.php', 
-	{ 
-		action: 'loginform/ajaxcheck', 
-		login: login.value, 
-		password: password.value 
-	},
+	url,
 	function (data) {
 		if (data == 'OK') {
-			window.location = 'index.php?action=loginform';
+			window.location = 'index.php';
 		} else {
 			alert('Login failed. '+data);
 		}

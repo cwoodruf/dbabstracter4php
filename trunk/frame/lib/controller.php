@@ -47,7 +47,7 @@ class Controller {
 		if (!Check::isvar($controller,false)) $controller = DEFCONTROLLER;
 
 		# avoid situations where we repeatedly go back to log in form when we are already logged in
-		if (isset($_SESSION['login']) and !strcasecmp($controller,LOGINCONTROLLER)) {
+		if (isset($_SESSION[LOGINSESSION]['login']) and !strcasecmp($controller,LOGINCONTROLLER)) {
 			$controller = DEFCONTROLLER;
 		}
 
@@ -78,7 +78,7 @@ class Controller {
 
 	# restore saved request
 	public static function redo() {
-		$_REQUEST = $_SESSION['request'];
+		$_REQUEST = $_SESSION[LOGINSESSION]['request'];
 		include('index.php');
 		exit;
 	}
@@ -93,21 +93,21 @@ class Controller {
 	# controller
 	public function flag($flag,$value=null) {
 		@session_start();
-		if (isset($value)) $_SESSION['flags'][$flag] = $value;
-		return $_SESSION['flags'][$flag];
+		if (isset($value)) $_SESSION[LOGINSESSION]['flags'][$flag] = $value;
+		return $_SESSION[LOGINSESSION]['flags'][$flag];
 	}
 
 	public function delflag($flag) {
 		@session_start();
-		$value = $_SESSION['flags'][$flag];
-		unset($_SESSION['flags'][$flag]);
+		$value = $_SESSION[LOGINSESSION]['flags'][$flag];
+		unset($_SESSION[LOGINSESSION]['flags'][$flag]);
 		return $value;
 	}
 
 	public function delflags() {
 		@session_start();
-		$flags = $_SESSION['flags'];
-		unset($_SESSION['flags']);
+		$flags = $_SESSION[LOGINSESSION]['flags'];
+		unset($_SESSION[LOGINSESSION]['flags']);
 		return $flags;
 	}
 
