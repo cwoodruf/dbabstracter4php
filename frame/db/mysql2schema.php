@@ -44,7 +44,7 @@ foreach ($tables as $row) {
 		$s['extra'] = $fdata['Extra'];
 		$tdata[$s['name']] = $s;
 	}
-	if (count(array_keys($keys)) > 1) {
+	if (count(array_keys($keys)) != 1) {
 		$tdata['PRIMARY KEY'] = $keys;
 	}
 	$schema[$table] = $tdata;
