@@ -31,16 +31,17 @@ class Login {
 			return $_SESSION[LOGINSESSION];
 
 		$pw = new $pwclass;
-		$login = isset($_REQUEST['login']) ? $_REQUEST['login'] : '';
+		$login = isset($_REQUEST[LOGINFIELD]) ? $_REQUEST[LOGINFIELD] : '';
 		if (!$pw->valid_login($login)) return;
 
-		$password = $_REQUEST['password'];
+		$password = $_REQUEST[PWFIELD];
 
 		if (!$pw->valid_pw($password)) return;
 		$password = $pw->encode_pw($password);
 
 		$ldata = $pw->get_login($login);
-		$loginok = ($ldata['password'] === $password) ? true : false;
+print "{$ldata[PWDBFIELD]} vs $password<br>\n";
+		$loginok = ($ldata[PWDBFIELD] === $password) ? true : false;
 
 		if ($loginok) {
 			$ldata = self::save_login($login,$ldata);
@@ -76,7 +77,7 @@ class Login {
 	}
 		
 	public static function encode($pw) {
-		require(SALTFILE);
+		require_once(SALTFILE);
 		return sha1($pw.SALT);
 	}
 

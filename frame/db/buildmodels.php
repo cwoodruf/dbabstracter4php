@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/local/bin/php
 <?php
 $lib = dirname(dirname(__FILE__));
 print "run both mysql2schema.pl and makeclasses.php to build out classes for a database\n";
