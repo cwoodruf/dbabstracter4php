@@ -23,7 +23,9 @@ class Login {
 	}
 
 	public static function check() {
-		return self::authenticate();
+		$me = self::authenticate();
+		if (!$me) $me = Login::checksig();
+		return $me;
 	}
 
 	private static function pwinstance() {
@@ -161,9 +163,9 @@ class Login {
 	}
 
 	# signature checking interface
-	public static function checksig($fields,$sig)
+	public static function checksig()
 	{
 		$pw = self::pwinstance();
-		return $pw->check_signature($fields,$sig);
+		return $pw->check_signature($_REQUEST,$_REQUEST[SIGFIELD]);
 	}
 }
