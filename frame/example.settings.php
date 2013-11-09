@@ -36,6 +36,7 @@ define('DBPW','db password');
 # define('LOGINFIELD','login');
 # define('PWFIELD','password');
 # define('PWDBFIELD','password');
+# define('SIGFIELD','sig');
 # object that manages login forms
 # define('LOGINCONTROLLER','Loginform');
 # key in the $_SESSION array for this login - this should be different for each site

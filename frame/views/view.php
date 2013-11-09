@@ -60,21 +60,31 @@ class View {
 	}
 
 	public static function addCSS($css) {
+		if (preg_match('#(.*)(\?.*)#',$css,$m)) {
+			$css = $m[1];
+			$querystring = $m[2];
+		}
 		if (!@filetype($css)) $css = "views/css/$css";
 		if (!@filetype($css)) return;
 		if (self::$cssfiles[$css]) return;
 		self::$cssfiles[$css] = true;
 		$sitedir = Controller::sitedir();
-		self::$css .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"$sitedir/$css\">\n";
+		self::$css .= "<link rel=\"stylesheet\" type=\"text/css\" ".
+			"href=\"$sitedir/$css$querystring\">\n";
 	}
 
 	public static function addJS($js) {
+		if (preg_match('#(.*)(\?.*)#',$js,$m)) {
+			$js = $m[1];
+			$querystring = $m[2];
+		}
 		if (!@filetype($js)) $js = "views/js/$js";
 		if (!@filetype($js)) return;
 		if (self::$jsfiles[$js]) return;
 		self::$jsfiles[$js] = true;
 		$sitedir = Controller::sitedir();
-		self::$js .= "<script type=\"text/javascript\" src=\"$sitedir/$js\" ></script>\n";
+		self::$js .= "<script type=\"text/javascript\" ".
+			"src=\"$sitedir/$js$querystring\" ></script>\n";
 	}
 }
 

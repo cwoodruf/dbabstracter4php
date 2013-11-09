@@ -44,6 +44,7 @@ if (!defined('LOGINMODEL')) 	define('LOGINMODEL','User');
 if (!defined('LOGINFIELD')) 	define('LOGINFIELD','login');
 if (!defined('PWFIELD')) 	define('PWFIELD','password');
 if (!defined('PWDBFIELD')) 	define('PWDBFIELD','password');
+if (!defined('SIGFIELD')) 	define('SIGFIELD','sig');
 # object that manages login forms
 if (!defined('LOGINCONTROLLER')) define('LOGINCONTROLLER','Loginform');
 # key in the $_SESSION array for this login - this should be different for each site
