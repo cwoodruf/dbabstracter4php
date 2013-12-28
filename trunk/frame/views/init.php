@@ -12,5 +12,5 @@ View::addCSS('main.css');
 View::addJS('jquery.js');
 View::addJS('jquery-ui.js');
 View::addJS('sprintf.min.js');
-View::addJS('ready.js');
+View::addJSatEnd('ready.js');
 

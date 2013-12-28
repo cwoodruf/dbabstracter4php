@@ -127,11 +127,11 @@ class Controller {
 	}
 
 	public function css() {
-		return View::$css;
+		return View::$css.View::$css_at_end;
 	}
 
 	public function js() {
-		return View::$js;
+		return View::$js.View::$js_at_end;
 	}
 	
 	public function sitedir() {

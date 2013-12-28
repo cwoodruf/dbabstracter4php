@@ -49,13 +49,13 @@ class Login {
 		$password = $_REQUEST[PWFIELD];
 
 		if (!$pw->valid_pw($password)) return;
+		$ldata = $pw->get_login($login);
 		$password = $pw->encode_pw($password);
 
-		$ldata = $pw->get_login($login);
 		$loginok = ($ldata[PWDBFIELD] === $password) ? true : false;
 
 		if ($loginok) {
-			$ldata = self::save_login($login,$ldata);
+			self::save_login($login,$ldata);
 			return $ldata;
 		}
 		return;
