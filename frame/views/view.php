@@ -11,6 +11,8 @@ class View {
 	public static $smarty;
 	public static $css;
 	public static $js;
+	public static $css_at_end;
+	public static $js_at_end;
 	public static $cssfiles;
 	public static $jsfiles;
 	public static $tplext;
@@ -59,7 +61,7 @@ class View {
 		$tpl .= ".".self::$tplext;
 	}
 
-	public static function addCSS($css) {
+	public static function addCSS($css, &$cssstr=false) {
 		if (preg_match('#(.*)(\?.*)#',$css,$m)) {
 			$css = $m[1];
 			$querystring = $m[2];
@@ -69,11 +71,19 @@ class View {
 		if (self::$cssfiles[$css]) return;
 		self::$cssfiles[$css] = true;
 		$sitedir = Controller::sitedir();
-		self::$css .= "<link rel=\"stylesheet\" type=\"text/css\" ".
+		$newcss = "<link rel=\"stylesheet\" type=\"text/css\" ".
 			"href=\"$sitedir/$css$querystring\">\n";
+		if ($cssstr !== false) $cssstr .= $newcss;
+		else self::$css .= $newcss;
 	}
 
-	public static function addJS($js) {
+	public static function addCSSatEnd($css) {
+		if (!isset(self::$css_at_end)) 
+			self::$css_at_end = "<!-- added after -->";
+		self::addCSSatEnd($css, self::$css_at_end);
+	}
+
+	public static function addJS($js, &$jsstr=false) {
 		if (preg_match('#(.*)(\?.*)#',$js,$m)) {
 			$js = $m[1];
 			$querystring = $m[2];
@@ -83,8 +93,16 @@ class View {
 		if (self::$jsfiles[$js]) return;
 		self::$jsfiles[$js] = true;
 		$sitedir = Controller::sitedir();
-		self::$js .= "<script type=\"text/javascript\" ".
+		$newjs = "<script type=\"text/javascript\" ".
 			"src=\"$sitedir/$js$querystring\" ></script>\n";
+		if ($jsstr !== false) $jsstr .= $newjs;
+		else self::$js .= $newjs;
+	}
+
+	public static function addJSatEnd($js) {
+		if (!isset(self::$js_at_end)) 
+			self::$js_at_end = "<!-- added after -->";
+		self::addJS($js, self::$js_at_end);
 	}
 }
 

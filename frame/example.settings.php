@@ -25,6 +25,8 @@ define('DBPW','db password');
 # define('LIBDIR','lib');
 # where the base db libraries are
 # define('DBDIR','db');
+# where to put temporary files
+# define('TMPDIR','/tmp');
 
 #components
 # parameter to use to determine controller "action"

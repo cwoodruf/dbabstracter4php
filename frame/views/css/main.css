@@ -99,6 +99,14 @@ div.menuitem a:hover {
 	padding: 5px;
 	float: left;
 }
+.menubold {
+	font-weight: bold;
+}
+div.menuend {
+	clear: both;
+	margin-bottom: 20px;
+}
+
 
 /* for calendars */
 .calendar-title,.calendar-form {

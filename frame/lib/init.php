@@ -33,6 +33,8 @@ if (!defined('VIEWDIR')) 	define('VIEWDIR','views');
 if (!defined('LIBDIR')) 	define('LIBDIR',dirname(__FILE__));
 # where the base db libraries are
 if (!defined('DBDIR')) 		define('DBDIR','db');
+# where to put temporary files
+if (!defined('TMPDIR')) 	define('TMPDIR','/tmp');
 
 #components
 # parameter to use to determine controller "action"
