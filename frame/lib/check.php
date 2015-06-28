@@ -52,7 +52,13 @@ class Check {
 	public static function isemail($s,$emptyok=null) {
 		if (self::emptyok($emptyok) and empty($s)) return true;
 		$s = trim($s);
-		return preg_match('#^\w[\w\.\-]*@\w[\w\.\-]*\.\w+$#', $s);
+		return preg_match('#^\w[\w\.\-\+]*@\w[\w\.\-]*\.\w+$#', $s);
+	}
+	public static function isemailorip($s,$emptyok=null) {
+		if (self::emptyok($emptyok) and empty($s)) return true;
+		$s = trim($s);
+		if (preg_match('#^\w[\w\.\-\+]*@\w[\w\.\-]*\.\w+$#', $s)) return true;
+		if (preg_match('#^(?:\d{1,3}\.){3}\d{1,3}$#', $s)) return true;
 	}
 	public static function isphone($s,$emptyok=null) {
 		if (self::emptyok($emptyok) and empty($s)) return true;

@@ -80,7 +80,13 @@
 {include file=$fdata.template field=$field data=$fdata}
 
 {elseif $fdata.type == 'text'}
-<textarea name="{$fieldname}" rows="{$fdata.rows}" cols="{$fdata.cols}">{$value}</textarea>
+<!-- http://stackoverflow.com/questions/657795/how-remove-wordwrap-from-textarea -->
+<!-- removed whitespace: nowrap clause in css as newlines didn't work anymore -->
+<textarea name="{$fieldname}" rows="{$fdata.rows}" cols="{$fdata.cols}" 
+ wrap="soft"
+ style="overflow: hidden; overflow-x: scroll; overflow-y: hidden; 
+        overflow: -moz-scrollbars-horizontal;"
+ >{$value}</textarea>
 
 {elseif $fdata.type == 'varchar'}
 <input name="{$fieldname}" size="{$fdata.size}" value="{$value}" /> 

@@ -105,10 +105,5 @@ PHP;
 function indent_var_export($php,$multiline=false) {
 	$php = preg_replace("#^#m","\t\t\t",$php);
 	return $php;
-	$php = preg_replace("#\s+#m"," ",$php);
-	if ($multiline) {
-		$php = preg_replace("#('[\w ]+' => array)#","\n\t\t\t\t$1",$php);
-		$php = preg_replace("#\)$#","\n\t\t\t)",$php);
-	}
-	return $php;
 }
+

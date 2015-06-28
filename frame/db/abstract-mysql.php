@@ -88,7 +88,6 @@ abstract class AbstractDB {
 	public function run() {
 		$args = func_get_args();
 		$query = array_shift($args);
-
 		if (count($args)) {
 			$query = vsprintf($query,$this->quote($args));
 		} 
@@ -155,11 +154,11 @@ abstract class AbstractDB {
 		if (is_array($str)) {
 			$quoted = array();
 			foreach ($str as $s) {
-				$quoted[] = $quote.mysql_real_escape_string($s,$this->conn()).$quote;
+				$quoted[] = $quote.mysql_real_escape_string($s).$quote;
 			}
 			return $quoted;
 		}
-		return $quote.mysql_real_escape_string($str,$this->conn()).$quote;
+		return $quote.mysql_real_escape_string($str).$quote;
 	}
 	/**
 	 * just get the last error
