@@ -154,10 +154,12 @@ abstract class AbstractDB {
 		if (is_array($str)) {
 			$quoted = array();
 			foreach ($str as $s) {
+				$s = str_replace('%', '%%', $s);
 				$quoted[] = $quote.mysql_real_escape_string($s).$quote;
 			}
 			return $quoted;
 		}
+		$str = str_replace('%', '%%', $str);
 		return $quote.mysql_real_escape_string($str).$quote;
 	}
 	/**
