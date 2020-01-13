@@ -80,7 +80,7 @@ class View {
 	public static function addCSSatEnd($css) {
 		if (!isset(self::$css_at_end)) 
 			self::$css_at_end = "<!-- added after -->";
-		self::addCSSatEnd($css, self::$css_at_end);
+		self::addCSS($css, self::$css_at_end);
 	}
 
 	public static function addJS($js, &$jsstr=false) {
