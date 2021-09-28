@@ -372,7 +372,7 @@ class Relation extends Entity {
 				if (!isset($data[$field])) continue;
 				$this->check($fdata,$data[$field],$field);
 				$set[] = "$field='%s'";
-				$vals[] = $this->modify($fdata,$this->quote($data[$field],"'"));
+				$vals[] = $this->modify($fdata,$data[$field]);
 			}
 			$query = "update {$this->table} set ".implode(",", $set)." where $key";
 			$valskeys = array_merge(array($query),$vals,$args);
